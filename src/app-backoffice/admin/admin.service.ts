@@ -36,6 +36,11 @@ export class AdminService {
     return admin;
   }
 
+  async findAll(): Promise<Admins[]> {
+    const admins = await this.adminsRepository.find();
+    return admins;
+  }
+
   async fillterAdminByName(context: string): Promise<NullableType<Admins[]>> {
     try {
       const admin = await this.adminsRepository
