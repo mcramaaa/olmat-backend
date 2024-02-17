@@ -27,7 +27,7 @@ export class CacheService {
    */
 
   async set<T>(key: string, payload: T, ttl = 3600): Promise<void> {
-    await this.cacheManager.set(key, payload, ttl);
+    await this.cacheManager.set(key, payload, { ttl });
   }
 
   /**

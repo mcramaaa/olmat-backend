@@ -13,10 +13,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from 'src/shared/guards/role.guard';
 import cacheConfig from 'src/shared/config/cache.config';
-import { CacheConfig } from 'src/shared/types/config.type';
+import { RedisClientOptions } from 'redis';
 import { AuthModule } from 'src/auth/auth.module';
-import * as redisStore from 'cache-manager-redis-store';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,16 +22,17 @@ import * as redisStore from 'cache-manager-redis-store';
       load: [databaseConfig, appConfig, authConfig, cacheConfig],
       envFilePath: ['.env'],
     }),
-    CacheModule.register({
+    CacheModule.registerAsync<RedisClientOptions>({
       isGlobal: true,
-      useFactory: async (configService: ConfigService<CacheConfig>) => ({
-        store: redisStore as any,
-        host: configService.get('host'),
-        max: configService.get('max'),
-        ttl: configService.get('ttl'),
-        port: configService.get('port'),
-        auth_pass: configService.get('auth_pass'),
-        db: configService.get('db'),
+      useFactory: () => ({
+        isGlobal: true,
+        store: require('cache-manager-redis-store'),
+        host: process.env.CACHE_HOST,
+        max: Number(process.env.CACHE_MAX),
+        ttl: Number(process.env.CACHE_TTL),
+        port: Number(process.env.CACHE_PORT),
+        auth_pass: process.env.CACHE_PASS,
+        db: Number(process.env.CACHE_DB),
       }),
       imports: [ConfigModule],
       inject: [ConfigService],

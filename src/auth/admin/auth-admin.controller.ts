@@ -8,7 +8,6 @@ import {
   SerializeOptions,
   Body,
 } from '@nestjs/common';
-import { SessionUser } from 'src/shared/decorators/user.decorator';
 import { AuthAdminService } from './auth-admin.service';
 import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 import { AuthEmailLoginDto } from '../dto/auth-email-login.dto';
@@ -16,6 +15,7 @@ import { OkResponse, okTransform } from 'src/shared/utils/ok-response';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { Admins } from 'src/entities/admins.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { SessionAdmin } from 'src/shared/decorators/admin.decorator';
 
 @ApiTags('Auth Admin')
 @Controller({
@@ -41,16 +41,16 @@ export class AuthAdminController {
   @UseGuards(AuthAdminGuard)
   @HttpCode(HttpStatus.OK)
   async admin(
-    @SessionUser() user: Admins,
+    @SessionAdmin() user: Admins,
   ): Promise<OkResponse<NullableType<Admins>>> {
     return okTransform(await this.service.me(user.id));
   }
 
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @Post('/logout')
   @UseGuards(AuthAdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async logout(@SessionUser() user: Admins): Promise<OkResponse<void>> {
+  async logout(@SessionAdmin() user: Admins): Promise<OkResponse<void>> {
     return okTransform(await this.service.logout(user.id));
   }
 }

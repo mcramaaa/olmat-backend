@@ -40,7 +40,7 @@ export default registerAs<CacheConfig>('cache', () => {
     ttl: process.env.CACHE_TTL ? parseInt(process.env.CACHE_TTL, 5) : 10,
     max: process.env.CACHE_MAX ? parseInt(process.env.CACHE_MAX, 10) : 5,
     host: process.env.CACHE_HOST || 'localhost',
-    port: 6378,
+    port: process.env.CACHE_PORT ? parseInt(process.env.CACHE_PORT) : 6379,
     auth_pass: process.env.CACHE_PASSWORD || 'P@ssw0rd',
     db: process.env.CACHE_DB ? Number(process.env.CACHE_DB) : 0,
   };
