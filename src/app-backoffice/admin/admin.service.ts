@@ -131,6 +131,8 @@ export class AdminService {
           HttpStatus.NOT_FOUND,
         );
       }
+
+      currentUser.role = curentRole;
     }
 
     if (payload.email) {
@@ -142,11 +144,12 @@ export class AdminService {
           HttpStatus.NOT_ACCEPTABLE,
         );
       }
+      currentUser.email = payload.email;
     }
 
-    return await this.adminsRepository.save(
-      this.adminsRepository.create({ id, ...payload }),
-    );
+    currentUser.name = payload.name;
+
+    return currentUser.save();
   }
 
   async delete(id: number): Promise<void> {
