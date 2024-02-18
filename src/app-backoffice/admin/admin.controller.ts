@@ -27,7 +27,7 @@ import { NullableType } from 'src/shared/types/nullable.type';
 @ApiBearerAuth()
 @UseGuards(AuthAdminGuard)
 @Controller({
-  path: '/admin',
+  path: 'backoffice/admin',
   version: '1',
 })
 export class AdminController {

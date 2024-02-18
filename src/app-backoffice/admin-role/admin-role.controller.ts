@@ -29,7 +29,7 @@ import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 @ApiBearerAuth()
 @UseGuards(AuthAdminGuard)
 @Controller({
-  path: '/admin-role',
+  path: 'backoffice/admin-role',
   version: '1',
 })
 export class AdminRoleController {

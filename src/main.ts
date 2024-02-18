@@ -14,6 +14,7 @@ import {
 import helmet from 'helmet';
 import validationOptions from './shared/utils/validation-options';
 import * as basicAuth from 'express-basic-auth';
+import { UserCLientModules } from './app-client/module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -72,6 +73,29 @@ async function bootstrap() {
         .build(),
       {
         include: BackofficeModules,
+      },
+    ),
+    {
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+    },
+  );
+
+  // User Swagger
+  SwaggerModule.setup(
+    'docs/user',
+    app,
+    SwaggerModule.createDocument(
+      app,
+      new DocumentBuilder()
+        .setTitle('API User')
+        .setDescription('API User docs')
+        .setVersion('1.0')
+        .addBearerAuth()
+        .build(),
+      {
+        include: UserCLientModules,
       },
     ),
     {
