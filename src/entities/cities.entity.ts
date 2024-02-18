@@ -14,13 +14,11 @@ export class Cities {
   name: string;
 
   @ManyToOne(() => Provincies, (province) => province.cities, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   province: Provincies;
 
   @ManyToOne(() => Regions, (region) => region.cities, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   region: Regions;

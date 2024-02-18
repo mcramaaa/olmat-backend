@@ -8,5 +8,6 @@ import { CityController } from './city.controller';
   imports: [TypeOrmModule.forFeature([Cities])],
   providers: [CityService],
   controllers: [CityController],
+  exports: [CityService],
 })
 export class CityModule {}

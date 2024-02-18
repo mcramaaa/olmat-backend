@@ -16,6 +16,7 @@ import { AuthUserGuard } from 'src/shared/guards/auth.guard';
 import { AuthRegisterLoginDto } from '../dto/auth-register-login.dto';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { Users } from 'src/entities/users.entity';
+import { OtpDto } from '../dto/otp.dto';
 
 @ApiTags('Auth User')
 @Controller({
@@ -37,6 +38,16 @@ export class AuthUserController {
       await this.service.register(createUserDto),
       'We have already send OTP for activation',
       HttpStatus.CREATED,
+    );
+  }
+
+  @Post('/confirm')
+  @HttpCode(HttpStatus.OK)
+  async confirmEmail(
+    @Body() payload: OtpDto,
+  ): Promise<OkResponse<{ token: string }>> {
+    return okTransform(
+      await this.service.confirmation(payload.hash, payload.otp),
     );
   }
 

@@ -14,6 +14,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from 'src/shared/guards/role.guard';
 import cacheConfig from 'src/shared/config/cache.config';
 import { RedisClientOptions } from 'redis';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { UserCLientModules } from 'src/app-client/module';
 import { AuthModule } from 'src/auth/auth.module';
 @Module({
   imports: [
@@ -21,6 +24,10 @@ import { AuthModule } from 'src/auth/auth.module';
       isGlobal: true,
       load: [databaseConfig, appConfig, authConfig, cacheConfig],
       envFilePath: ['.env'],
+    }),
+    EventEmitterModule.forRoot({
+      global: true,
+      verboseMemoryLeak: true,
     }),
     CacheModule.registerAsync<RedisClientOptions>({
       isGlobal: true,
@@ -43,8 +50,32 @@ import { AuthModule } from 'src/auth/auth.module';
         return new DataSource(options).initialize();
       },
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'mail.olmat-uinsa.com',
+        port: 465,
+        // ignoreTLS: true,
+        secure: true,
+        auth: {
+          user: 'olmatuinsa@olmat-uinsa.com',
+          pass: '#OlmatUINSA20',
+        },
+      },
+      // defaults: {
+      //   from: '"No Reply" <no-reply@localhost>',
+      // },
+      // preview: true,
+    }),
+    // MailerModule.forRoot({
+    //   transport:
+    //     'smtps://olmatuinsa@olmat-uinsa.com:#OlmatUINSA20@mail.olmat-uinsa.com',
+    //   defaults: {
+    //     from: '"No Reply" <no-reply@olmat-uinsa.com>',
+    //   },
+    // }),
     AuthModule,
     ...BackofficeModules,
+    ...UserCLientModules,
   ],
   controllers: [AppController],
   providers: [

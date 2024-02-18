@@ -7,10 +7,14 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { TypeOrmConfigService } from '../typeorm-config.service';
 
 import { AdminSeedModule } from './admin/admin-seed.module';
+import { RegionSeedModule } from './region/region-seed.module';
+import { ProvinceSeedModule } from './province-seed/province-seed.module';
+import { CitySeedModule } from './city-seed/city-seed.module';
+import { SubdistrictSeedModule } from './subdistrict-seed/subdistrict-seed.module';
+import { DegreeSeedModule } from './degree-seed/degree-seed.module';
 
 @Module({
   imports: [
-    AdminSeedModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],
@@ -22,6 +26,12 @@ import { AdminSeedModule } from './admin/admin-seed.module';
         return new DataSource(options).initialize();
       },
     }),
+    AdminSeedModule,
+    RegionSeedModule,
+    ProvinceSeedModule,
+    CitySeedModule,
+    SubdistrictSeedModule,
+    DegreeSeedModule,
   ],
 })
 export class SeedModule {}

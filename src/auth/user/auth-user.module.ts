@@ -9,11 +9,13 @@ import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/app-client/user/user.module';
 import { JWTUserStrategy } from '../strategies/jwt-user.strategy';
 import { AnonymousStrategy } from '../strategies/anonymous.strategy';
+import { SchoolModule } from 'src/app-client/school/school.module';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
+    SchoolModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

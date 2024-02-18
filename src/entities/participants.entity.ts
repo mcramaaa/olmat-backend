@@ -33,13 +33,11 @@ export class Participants {
   status: string;
 
   @ManyToOne(() => Payments, (payment) => payment.participants, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   payment: Payments;
 
   @ManyToOne(() => Schools, (school) => school.participants, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   school: Schools;

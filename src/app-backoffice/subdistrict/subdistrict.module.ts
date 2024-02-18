@@ -8,5 +8,6 @@ import { SubdistrictController } from './subdistrict.controller';
   imports: [TypeOrmModule.forFeature([Subdistricts])],
   providers: [SubdistrictService],
   controllers: [SubdistrictController],
+  exports: [SubdistrictService],
 })
 export class SubdistrictModule {}

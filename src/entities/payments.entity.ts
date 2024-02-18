@@ -33,7 +33,6 @@ export class Payments {
   participants: Participants[];
 
   @ManyToOne(() => Users, (user) => user.payments, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   user: Users;

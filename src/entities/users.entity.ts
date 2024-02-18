@@ -1,14 +1,22 @@
 import { AuditTrail } from 'src/shared/utils/entity-helper';
-import { Entity, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Payments } from './payments.entity';
+import { Schools } from './schools.entity';
+import { Regions } from './regions.entity';
 
 @Entity()
 export class Users {
-  @Column({ unique: true, primary: true })
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column()
-  nama: string;
+  name: string;
 
   @Column({ unique: true })
   email: string;
@@ -24,6 +32,16 @@ export class Users {
 
   @OneToMany(() => Payments, (payment) => payment.user)
   payments: Payments[];
+
+  @ManyToOne(() => Schools, (school) => school.users, {
+    nullable: false,
+  })
+  school: Schools;
+
+  @ManyToOne(() => Regions, (region) => region.users, {
+    nullable: false,
+  })
+  region: Regions;
 
   @Column(() => AuditTrail, { prefix: false })
   audit_trail: AuditTrail;

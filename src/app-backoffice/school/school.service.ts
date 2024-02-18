@@ -10,6 +10,12 @@ export class SchoolService {
     @InjectRepository(Schools) private repository: Repository<Schools>,
   ) {}
 
+  async getSchoolBySubdistrict(subdistrict_id: number): Promise<Schools[]> {
+    return await this.repository.find({
+      where: { subdistrict: { id: subdistrict_id } },
+    });
+  }
+
   async findManyWithPagination(
     paginationOptions: IPaginationOptions,
   ): Promise<[Schools[], number]> {

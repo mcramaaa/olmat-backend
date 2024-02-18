@@ -1,18 +1,23 @@
 import { AuditTrail } from 'src/shared/utils/entity-helper';
-import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Cities } from './cities.entity';
 import { Schools } from './schools.entity';
 
 @Entity()
 export class Subdistricts {
-  @Column({ unique: true, primary: true })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;
 
   @ManyToOne(() => Cities, (city) => city.subdistricts, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   city: Cities;
