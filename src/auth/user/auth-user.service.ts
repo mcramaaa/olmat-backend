@@ -1,5 +1,6 @@
 import {
   ForbiddenException,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -24,6 +25,10 @@ import { AUTH_EVENT } from 'src/shared/enums/auth-event.enum';
 import { EmailOTPEvent } from '../events/email-otp.event';
 import { parseTimeToSeconds } from 'src/shared/utils/date';
 import { SchoolService } from 'src/app-client/school/school.service';
+import { AuthUserLoginDto } from '../dto/auth-user-login.dto';
+import { LoginResponseType } from 'src/shared/types/auth/login-response.type';
+import { ErrorException } from 'src/shared/exceptions/error.exception';
+import { compare } from 'src/shared/utils/hash';
 
 @Injectable()
 export class AuthUserService {
@@ -192,10 +197,91 @@ export class AuthUserService {
     }
   }
 
+  async resendOTP(hash: string) {
+    const isSessionValid = await this.cacheService.get(
+      this.getOTPCacheKey(hash),
+    );
+    if (!isSessionValid) {
+      throw new ForbiddenException('The provided token has expired.');
+    }
+    const userCache: Users & { otp_counter: number; otp_secret: string } =
+      await this.cacheService.get(this.getUserKey(hash));
+    if (!userCache) {
+      throw new ForbiddenException('Data is invalid.');
+    }
+
+    const userHash = generateHash();
+    userCache.otp_counter = Number(userCache.otp_counter) + 1;
+
+    const passcode = Hotp.generatePasscode(
+      {
+        counter: userCache.otp_counter,
+        secret: String(userCache.otp_secret),
+      },
+      this.OTPConfig,
+    );
+
+    await this.cacheService.remove(this.getOTPCacheKey(hash));
+    await this.cacheService.set(
+      this.getOTPCacheKey(userHash),
+      1,
+      this.config.otpExpires,
+    );
+
+    //Send email otp
+    this.eventEmitter.emit(
+      AUTH_EVENT.AUTH_OTP,
+      new EmailOTPEvent(userCache.email, passcode),
+    );
+    return userHash;
+  }
+
   async me(user: Users): Promise<NullableType<Users>> {
     return this.usersService.findOne({
       id: user.id,
     });
+  }
+
+  async validateLogin(
+    loginDto: AuthUserLoginDto,
+  ): Promise<LoginResponseType<Users>> {
+    const user = await this.usersService.findOne({
+      email: loginDto.email,
+    });
+
+    if (!user) {
+      throw new ErrorException(
+        {
+          email: 'notFound',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const isValidPassword = compare(loginDto.password, user.password);
+
+    if (!isValidPassword) {
+      throw new ErrorException(
+        {
+          password: 'incorrectPassword',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const token = this.jwtService.sign({
+      id: user.id,
+      name: user.name,
+      access: 'user',
+    });
+
+    await this.cacheService.set(
+      formatString(CACHE_KEY_AUTH.SESSION, user.id),
+      true,
+      parseTimeToSeconds(this.config.sessionExpires ?? '1h'),
+    );
+
+    return { token, user };
   }
 
   async logout(token: string): Promise<void> {

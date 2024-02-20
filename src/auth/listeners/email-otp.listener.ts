@@ -11,7 +11,6 @@ export class EmailOtpListener {
   @OnEvent(AUTH_EVENT.AUTH_OTP)
   async handleEmailOtpEvent(event: EmailOTPEvent) {
     const template = `Berikut adalah kode otp anda: [passcode]`;
-    console.log('here');
 
     this.mailerService
       .sendMail({
@@ -23,8 +22,8 @@ export class EmailOtpListener {
       .then(() => {
         console.log('success sending otp');
       })
-      .catch((errot) => {
-        console.log(errot);
+      .catch((error) => {
+        console.log(error);
       });
   }
 }

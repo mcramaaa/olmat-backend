@@ -156,7 +156,6 @@ export class AdminService {
     try {
       await this.adminsRepository.delete(id);
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException();
     }
   }

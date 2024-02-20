@@ -5,7 +5,6 @@ import {
   HttpStatus,
   Post,
   UseGuards,
-  SerializeOptions,
   Body,
 } from '@nestjs/common';
 import { AuthUserService } from './auth-user.service';
@@ -17,6 +16,8 @@ import { AuthRegisterLoginDto } from '../dto/auth-register-login.dto';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { Users } from 'src/entities/users.entity';
 import { OtpDto } from '../dto/otp.dto';
+import { HashDTO } from '../dto/hash.dto';
+import { AuthUserLoginDto } from '../dto/auth-user-login.dto';
 
 @ApiTags('Auth User')
 @Controller({
@@ -26,9 +27,6 @@ import { OtpDto } from '../dto/otp.dto';
 export class AuthUserController {
   constructor(private readonly service: AuthUserService) {}
 
-  @SerializeOptions({
-    groups: ['me'],
-  })
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
   async register(
@@ -36,6 +34,18 @@ export class AuthUserController {
   ): Promise<OkResponse<string>> {
     return okTransform(
       await this.service.register(createUserDto),
+      'We have already send OTP for activation',
+      HttpStatus.CREATED,
+    );
+  }
+
+  @Post('/resend/otp')
+  @HttpCode(HttpStatus.OK)
+  async confirmResendOTP(
+    @Body() payload: HashDTO,
+  ): Promise<OkResponse<string>> {
+    return okTransform(
+      await this.service.resendOTP(payload.hash),
       'We have already send OTP for activation',
       HttpStatus.CREATED,
     );
@@ -52,9 +62,6 @@ export class AuthUserController {
   }
 
   @ApiBearerAuth()
-  @SerializeOptions({
-    groups: ['me'],
-  })
   @Get('/me')
   @UseGuards(AuthUserGuard)
   @HttpCode(HttpStatus.OK)
@@ -62,6 +69,14 @@ export class AuthUserController {
     @SessionUser() user: Users,
   ): Promise<OkResponse<NullableType<Users>>> {
     return okTransform(await this.service.me(user));
+  }
+
+  @Post('/login')
+  @HttpCode(HttpStatus.OK)
+  async userLogin(
+    @Body() loginDto: AuthUserLoginDto,
+  ): Promise<OkResponse<Readonly<{ token: string; user: Users }>>> {
+    return okTransform(await this.service.validateLogin(loginDto));
   }
 
   @ApiBearerAuth()
