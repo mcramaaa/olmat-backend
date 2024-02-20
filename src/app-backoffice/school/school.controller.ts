@@ -4,7 +4,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   ParseIntPipe,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -38,5 +40,27 @@ export class SchoolController {
     });
 
     return customPagination(data, count, { page, limit });
+  }
+
+  @Get('/request-lists')
+  @HttpCode(HttpStatus.OK)
+  @ApiQuery({ name: 'page', required: true, example: 1 })
+  @ApiQuery({ name: 'limit', required: true, example: 10 })
+  async requestLists(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<PaginationResultType<Schools>> {
+    const [data, count] = await this.schoolService.schoolRequesList({
+      page,
+      limit,
+    });
+
+    return customPagination(data, count, { page, limit });
+  }
+
+  @Patch('/accept/:school_id')
+  @HttpCode(HttpStatus.OK)
+  async acceptSchool(@Param('school_id') school_id: number) {
+    return await this.schoolService.acceptSchool(school_id);
   }
 }
