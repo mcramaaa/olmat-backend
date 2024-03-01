@@ -12,6 +12,9 @@ export class UserService {
   ) {}
 
   async findOne(condition: EntityCondition<Users>) {
-    return await this.userRepository.findOne({ where: condition });
+    return await this.userRepository.findOne({
+      where: condition,
+      relations: { school: { degree: true } },
+    });
   }
 }

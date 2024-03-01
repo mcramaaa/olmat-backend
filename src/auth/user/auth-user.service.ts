@@ -174,6 +174,8 @@ export class AuthUserService {
 
       const token = this.jwtService.sign({
         id: user.id,
+        name: user.name,
+        school: user.school,
         access: 'user',
       });
 
@@ -272,6 +274,7 @@ export class AuthUserService {
     const token = this.jwtService.sign({
       id: user.id,
       name: user.name,
+      school: user.school,
       access: 'user',
     });
 
