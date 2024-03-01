@@ -9,6 +9,9 @@ export class Degree {
   @Column()
   name: string;
 
+  @Column({ unsigned: true })
+  register_price: number;
+
   @OneToMany(() => Schools, (school) => school.degree)
   schools: Schools[];
 }

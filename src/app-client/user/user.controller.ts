@@ -1,10 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthUserGuard } from 'src/shared/guards/auth.guard';
 
 @ApiTags('User')
-// @ApiBearerAuth()
-// @UseGuards(AuthAdminGuard)
+@ApiBearerAuth()
+@UseGuards(AuthUserGuard)
 @Controller({
   path: 'user',
   version: '1',

@@ -13,12 +13,12 @@ export class DegreeSeedService {
     const count = await this.repository.count();
     if (count === 0) {
       await this.repository.query(`
-             INSERT INTO degree (id, name) VALUES
-                ('001', 'SMA'),
-                ('002', 'SMP'),
-                ('003', 'MTS'),
-                ('004', 'SD'),
-                ('005', 'MI');
+             INSERT INTO degree (id, name, register_price) VALUES
+                ('001', 'SMA', 100000),
+                ('002', 'SMP', 75000),
+                ('003', 'MTS', 75000),
+                ('004', 'SD', 50000),
+                ('005', 'MI', 50000);
             `);
     }
   }

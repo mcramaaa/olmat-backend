@@ -38,7 +38,7 @@ export class Schools extends EntityHelper {
   @Column({ type: 'enum', enum: SchoolStatus, default: SchoolStatus.HITAM })
   status: SchoolStatus;
 
-  @Column()
+  @Column({ default: false })
   is_accept: boolean;
 
   @OneToMany(() => Participants, (participant) => participant.school)

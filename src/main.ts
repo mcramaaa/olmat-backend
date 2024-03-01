@@ -15,11 +15,13 @@ import helmet from 'helmet';
 import validationOptions from './shared/utils/validation-options';
 import * as basicAuth from 'express-basic-auth';
 import { UserCLientModules } from './app-client/module';
+import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
+  app.useStaticAssets(path.join(__dirname, '../storage/'));
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 

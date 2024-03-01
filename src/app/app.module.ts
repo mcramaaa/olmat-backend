@@ -18,6 +18,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UserCLientModules } from 'src/app-client/module';
 import { AuthModule } from 'src/auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -66,13 +68,7 @@ import { AuthModule } from 'src/auth/auth.module';
       // },
       // preview: true,
     }),
-    // MailerModule.forRoot({
-    //   transport:
-    //     'smtps://olmatuinsa@olmat-uinsa.com:#OlmatUINSA20@mail.olmat-uinsa.com',
-    //   defaults: {
-    //     from: '"No Reply" <no-reply@olmat-uinsa.com>',
-    //   },
-    // }),
+
     AuthModule,
     ...BackofficeModules,
     ...UserCLientModules,

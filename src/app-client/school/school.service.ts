@@ -25,7 +25,7 @@ export class SchoolService {
   ): Promise<NullableType<Schools>> {
     return await this.repository.findOne({
       where: condition,
-      relations: { city: { region: true } },
+      relations: { city: { region: true }, degree: true },
     });
   }
 

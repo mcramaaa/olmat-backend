@@ -30,7 +30,7 @@ export class SchoolService {
         skip: (paginationOptions.page - 1) * paginationOptions.limit,
         take: paginationOptions.limit,
         where: { is_accept: true },
-        relations: { city: { region: true } },
+        relations: { city: { region: true }, degree: true },
       });
     } catch (error) {
       throw new InternalServerErrorException();
@@ -40,7 +40,10 @@ export class SchoolService {
   async findOne(
     condition: EntityCondition<Schools>,
   ): Promise<NullableType<Schools>> {
-    return await this.repository.findOne({ where: condition });
+    return await this.repository.findOne({
+      where: condition,
+      relations: { degree: true },
+    });
   }
 
   async schoolRequesList(
@@ -51,7 +54,7 @@ export class SchoolService {
         skip: (paginationOptions.page - 1) * paginationOptions.limit,
         take: paginationOptions.limit,
         where: { is_accept: false },
-        relations: { city: { region: true } },
+        relations: { city: { region: true }, degree: true },
       });
     } catch (error) {
       throw new InternalServerErrorException();
