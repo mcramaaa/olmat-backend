@@ -67,7 +67,9 @@ export class ParticipantService {
     imgs: string[],
     attachments: string[],
   ) {
-    const school = await this.schoolService.findOne({ id: payload.school_id });
+    const school = await this.schoolService.findOne({
+      id: payload.school_id ? payload.school_id : user.school.id,
+    });
     if (!school) throw new BadRequestException();
 
     const queryRunner = this.datasource.createQueryRunner();

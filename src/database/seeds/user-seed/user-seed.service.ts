@@ -24,11 +24,12 @@ export class UserSeedService {
           email: 'user@gmail.com',
           password: 'ggwp',
           phone: '08168',
-          type: 'A',
+          type: 'Admin',
           school,
           region: school.city.region,
         }),
       );
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();

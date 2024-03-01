@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateParticipantDTO {
   @ApiProperty()
@@ -8,8 +8,8 @@ export class CreateParticipantDTO {
   participants: any[];
 
   @ApiProperty()
-  @IsNotEmpty()
-  school_id: number;
+  @IsOptional()
+  school_id?: number;
 
   @ApiProperty()
   @IsNotEmpty()
