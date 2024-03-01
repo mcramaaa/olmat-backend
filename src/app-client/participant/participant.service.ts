@@ -16,9 +16,7 @@ import { Users } from 'src/entities/users.entity';
 import { rtrim0 } from 'src/shared/utils/rtrim.helper';
 import { CashbackSettingService } from 'src/core/cashback-setting/cashback-setting.service';
 import { Degree } from 'src/entities/degree.entity';
-import { Multer } from 'multer';
 import { unlink } from 'fs';
-import { CustomStatusException } from 'src/shared/exceptions/custom.exception';
 import { ErrorException } from 'src/shared/exceptions/error.exception';
 
 @Injectable()

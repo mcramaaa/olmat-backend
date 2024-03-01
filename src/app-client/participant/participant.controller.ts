@@ -11,7 +11,6 @@ import {
   Query,
   Req,
   SerializeOptions,
-  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -26,10 +25,7 @@ import { CreateParticipantDTO } from './dto/create-participant.dto';
 import { SessionUser } from 'src/shared/decorators/user.decorator';
 import { Users } from 'src/entities/users.entity';
 import { AuthUserGuard } from 'src/shared/guards/auth.guard';
-import {
-  FileFieldsInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Participant')
 @Controller({
