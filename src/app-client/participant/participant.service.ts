@@ -97,49 +97,90 @@ export class ParticipantService {
             channel_code: 'ID_DANA',
           },
           amount: await this.getPrice(
-            payload.participants.length,
+            typeof payload.participants === 'string'
+              ? 1
+              : payload.participants.length,
             school.degree,
           ),
           user,
         }),
       );
 
-      const participants = await Promise.all(
-        payload.participants.map(async (participant, i) => {
-          const objParticipant: Participants = JSON.parse(participant);
-          const res = await queryRunner.manager.save(
-            queryRunner.manager.create(Participants, {
-              id:
-                school.city.region.id +
-                school.degree.id +
-                rtrim0('0000', String(+participantCount + i)),
-              name: objParticipant.name,
-              gender: objParticipant.gender,
-              phone: objParticipant.phone,
-              email: objParticipant.email,
-              birth: objParticipant.birth,
-              img: imgs[i],
-              attachment: attachments[i],
-              school,
-              payment,
-            }),
-          );
-          const propertiesToDelete = [
-            'payment',
-            'school',
-            'status',
-            'id',
-            'phone',
-          ];
+      const participants = [];
 
-          propertiesToDelete.forEach((property) => {
-            if (res.hasOwnProperty(property)) {
-              delete res[property];
-            }
-          });
-          return res;
-        }),
-      );
+      if (typeof payload.participants === 'string') {
+        const objParticipant: Participants = JSON.parse(payload.participants);
+        const res = await queryRunner.manager.save(
+          queryRunner.manager.create(Participants, {
+            id:
+              school.city.region.id +
+              school.degree.id +
+              rtrim0('0000', String(+participantCount + 1)),
+            name: objParticipant.name,
+            gender: objParticipant.gender,
+            phone: objParticipant.phone,
+            email: objParticipant.email,
+            birth: objParticipant.birth,
+            img: imgs[0],
+            attachment: attachments[0],
+            school,
+            payment,
+          }),
+        );
+        const propertiesToDelete = [
+          'payment',
+          'school',
+          'status',
+          'id',
+          'phone',
+        ];
+
+        propertiesToDelete.forEach((property) => {
+          if (res.hasOwnProperty(property)) {
+            delete res[property];
+          }
+        });
+        participants.push(res);
+      } else {
+        participants.push(
+          ...(await Promise.all(
+            payload.participants.map(async (participant, i) => {
+              const objParticipant: Participants = JSON.parse(participant);
+              const res = await queryRunner.manager.save(
+                queryRunner.manager.create(Participants, {
+                  id:
+                    school.city.region.id +
+                    school.degree.id +
+                    rtrim0('0000', String(+participantCount + i)),
+                  name: objParticipant.name,
+                  gender: objParticipant.gender,
+                  phone: objParticipant.phone,
+                  email: objParticipant.email,
+                  birth: objParticipant.birth,
+                  img: imgs[i],
+                  attachment: attachments[i],
+                  school,
+                  payment,
+                }),
+              );
+              const propertiesToDelete = [
+                'payment',
+                'school',
+                'status',
+                'id',
+                'phone',
+              ];
+
+              propertiesToDelete.forEach((property) => {
+                if (res.hasOwnProperty(property)) {
+                  delete res[property];
+                }
+              });
+              return res;
+            }),
+          )),
+        );
+      }
 
       await queryRunner.commitTransaction();
       delete payment.user;
@@ -158,13 +199,13 @@ export class ParticipantService {
           if (err) throw err;
         });
       });
-      const regex = /'([^']+)'/;
-      const match = error.sqlMessage.match(regex);
       let extractedString: string | undefined;
-      if (match && match.length > 1) {
-        extractedString = match[1];
-      }
       if (error.code === 'ER_DUP_ENTRY') {
+        const regex = /'([^']+)'/;
+        const match = error.sqlMessage.match(regex);
+        if (match && match.length > 1) {
+          extractedString = match[1];
+        }
         throw new ErrorException(
           {
             message: `Phone ${extractedString} is already to use!`,
