@@ -18,6 +18,7 @@ import { CashbackSettingService } from 'src/core/cashback-setting/cashback-setti
 import { Degree } from 'src/entities/degree.entity';
 import { unlink } from 'fs';
 import { ErrorException } from 'src/shared/exceptions/error.exception';
+import { ulid } from 'ulid';
 
 @Injectable()
 export class ParticipantService {
@@ -85,7 +86,7 @@ export class ParticipantService {
       });
       const payment = await queryRunner.manager.save(
         queryRunner.manager.create(Payments, {
-          invoice: `${school.city.region.id}${school.degree.id}${paymentCount}`,
+          invoice: ulid() + paymentCount,
           code: payload.payment_code,
           participant_amounts: payload.participants.length,
           action: {
@@ -103,10 +104,10 @@ export class ParticipantService {
         }),
       );
 
-      await Promise.all(
+      const participants = await Promise.all(
         payload.participants.map(async (participant, i) => {
           const objParticipant: Participants = JSON.parse(participant);
-          await queryRunner.manager.save(
+          const res = await queryRunner.manager.save(
             queryRunner.manager.create(Participants, {
               id:
                 school.city.region.id +
@@ -123,11 +124,29 @@ export class ParticipantService {
               payment,
             }),
           );
+          const propertiesToDelete = [
+            'payment',
+            'school',
+            'status',
+            'id',
+            'phone',
+          ];
+
+          propertiesToDelete.forEach((property) => {
+            if (res.hasOwnProperty(property)) {
+              delete res[property];
+            }
+          });
+          return res;
         }),
       );
 
       await queryRunner.commitTransaction();
-      return payment.action;
+      delete payment.user;
+      return {
+        payment,
+        participants,
+      };
     } catch (error: any) {
       imgs.map(async (img) => {
         await unlink('./storage/imgs/' + img, (err) => {
