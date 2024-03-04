@@ -68,7 +68,6 @@ export class AuthUserController {
   async me(
     @SessionUser() user: Users,
   ): Promise<OkResponse<NullableType<Users>>> {
-    console.log('here', user);
     return okTransform(await this.service.me(user));
   }
 

@@ -26,7 +26,7 @@ import { CashbackSettingModule } from 'src/core/cashback-setting/cashback-settin
         filename: (req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
-          if (file.mimetype.startsWith('image/')) {
+          if (file.fieldname === 'imgs') {
             req['imgFileNames'] = req['imgFileNames'] || [];
             req['imgFileNames'].push(
               file.fieldname + '-' + uniqueSuffix + '.webp',
