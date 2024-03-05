@@ -27,6 +27,8 @@ import { Users } from 'src/entities/users.entity';
 import { AuthUserGuard } from 'src/shared/guards/auth.guard';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
+@ApiBearerAuth()
+@UseGuards(AuthUserGuard)
 @ApiTags('Participant')
 @Controller({
   path: 'participant',
@@ -41,11 +43,15 @@ export class ParticipantController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @SessionUser() user: Users,
   ): Promise<PaginationResultType<Participants>> {
-    const [data, count] = await this.participantService.findManyWithPagination({
-      page,
-      limit,
-    });
+    const [data, count] = await this.participantService.findManyWithPagination(
+      {
+        page,
+        limit,
+      },
+      user,
+    );
 
     return customPagination(data, count, { page, limit });
   }
@@ -56,8 +62,6 @@ export class ParticipantController {
     return await this.participantService.findOne({ id: id });
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthUserGuard)
   @SerializeOptions({
     groups: ['admin'],
   })

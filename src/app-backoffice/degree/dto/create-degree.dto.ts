@@ -9,4 +9,8 @@ export class CreateDegreeDto {
   @ApiProperty()
   @IsNotEmpty()
   name: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  register_price: number;
 }

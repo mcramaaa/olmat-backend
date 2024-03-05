@@ -1,8 +1,9 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { Schools } from './schools.entity';
+import { EntityHelper } from 'src/shared/utils/entity-helper copy';
 
 @Entity()
-export class Degree {
+export class Degree extends EntityHelper {
   @Column({ unique: true, primary: true })
   id: string;
 

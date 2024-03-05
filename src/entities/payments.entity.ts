@@ -10,7 +10,7 @@ import {
 import { Participants } from './participants.entity';
 import { Users } from './users.entity';
 import { EntityHelper } from 'src/shared/utils/entity-helper copy';
-import { PaymentType } from 'src/shared/enums/payment.enum';
+import { PaymentStatus } from 'src/shared/enums/payment.enum';
 import { PaymentGateways } from './payment-gateways.entity';
 import { Expose } from 'class-transformer';
 
@@ -41,8 +41,8 @@ export class Payments extends EntityHelper {
   @Column({ default: () => 'DATE_ADD(CURRENT_TIMESTAMP() , INTERVAL 24 HOUR)' })
   expired_at: Date;
 
-  @Column({ type: 'enum', enum: PaymentType, default: PaymentType.PENDING })
-  status: PaymentType;
+  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
+  status: PaymentStatus;
 
   @OneToMany(() => Participants, (participant) => participant.payment)
   participants: Participants[];

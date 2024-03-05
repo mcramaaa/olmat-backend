@@ -4,6 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Cities } from 'src/entities/cities.entity';
 import { Subdistricts } from 'src/entities/subdistricts.entity';
 import { Schools } from 'src/entities/schools.entity';
+import { Degree } from 'src/entities/degree.entity';
 
 @ApiTags('Location API')
 // @ApiBearerAuth()
@@ -43,5 +44,11 @@ export class LocationApiController {
     @Param('subdistrict_id') subdistrict_id: number,
   ): Promise<Schools[]> {
     return await this.locationService.getSchools(subdistrict_id);
+  }
+
+  @Get('degree')
+  @HttpCode(HttpStatus.OK)
+  async getDegree(): Promise<Degree[]> {
+    return await this.locationService.getDegree();
   }
 }

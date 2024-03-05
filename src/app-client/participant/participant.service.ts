@@ -32,11 +32,13 @@ export class ParticipantService {
 
   async findManyWithPagination(
     paginationOptions: IPaginationOptions,
+    user: Users,
   ): Promise<[Participants[], number]> {
     try {
       return await this.repository.findAndCount({
         skip: (paginationOptions.page - 1) * paginationOptions.limit,
         take: paginationOptions.limit,
+        where: { payment: { user: { id: user.id } } },
       });
     } catch (error) {
       throw new InternalServerErrorException();
@@ -88,7 +90,10 @@ export class ParticipantService {
         queryRunner.manager.create(Payments, {
           invoice: ulid() + paymentCount,
           code: payload.payment_code,
-          participant_amounts: payload.participants.length,
+          participant_amounts:
+            typeof payload.participants === 'string'
+              ? 1
+              : payload.participants.length,
           action: {
             id: 'qr_51026ab3-7c75-4624-86f6-0a6173ac1b10',
             type: 'DYNAMIC',

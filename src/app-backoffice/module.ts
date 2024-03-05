@@ -9,6 +9,7 @@ import { SchoolModule } from './school/school.module';
 import { SubdistrictModule } from './subdistrict/subdistrict.module';
 import { UserModule } from './user/user.module';
 import { DegreeModule } from './degree/degree.module';
+import { PaymentModule } from './payment/payment.module';
 
 export const BackofficeModules = [
   AuthAdminModule,
@@ -22,4 +23,5 @@ export const BackofficeModules = [
   SubdistrictModule,
   UserModule,
   DegreeModule,
+  PaymentModule,
 ];
