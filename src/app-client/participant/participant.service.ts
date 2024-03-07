@@ -140,15 +140,12 @@ export class ParticipantService {
     await queryRunner.startTransaction();
 
     try {
-      const paymentCount = await queryRunner.manager.count(Payments, {
-        lock: { mode: 'pessimistic_write' },
-      });
       const participantCount = await queryRunner.manager.count(Payments, {
         lock: { mode: 'pessimistic_write' },
       });
       const payment = await queryRunner.manager.save(
         queryRunner.manager.create(Payments, {
-          invoice: ulid() + paymentCount,
+          invoice,
           code: payload.payment_code,
           participant_amounts:
             typeof payload.participants === 'string'
