@@ -25,7 +25,7 @@ export class SchoolSeedService {
     });
 
     const degree = await queryRunner.manager.findOneOrFail(Degree, {
-      where: { id: '001' },
+      where: { id: '01' },
     });
 
     try {

@@ -1,4 +1,3 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,10 +8,10 @@ import {
 } from 'typeorm';
 import { Participants } from './participants.entity';
 import { Users } from './users.entity';
-import { EntityHelper } from 'src/shared/utils/entity-helper copy';
-import { PaymentStatus } from 'src/shared/enums/payment.enum';
 import { PaymentGateways } from './payment-gateways.entity';
 import { Expose } from 'class-transformer';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
+import { PaymentStatus } from 'src/shared/enums/payment.enum';
 
 @Entity()
 export class Payments extends EntityHelper {
@@ -36,7 +35,13 @@ export class Payments extends EntityHelper {
   participant_amounts: number;
 
   @Column({ unsigned: true })
+  fee: number;
+
+  @Column({ unsigned: true })
   amount: number;
+
+  @Column({ unsigned: true })
+  total_amount: number;
 
   @Column({ default: () => 'DATE_ADD(CURRENT_TIMESTAMP() , INTERVAL 24 HOUR)' })
   expired_at: Date;

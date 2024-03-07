@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { Schools } from './schools.entity';
-import { EntityHelper } from 'src/shared/utils/entity-helper copy';
+import { EntityHelper } from 'src/shared/utils/entity-helper';
 
 @Entity()
 export class Degree extends EntityHelper {

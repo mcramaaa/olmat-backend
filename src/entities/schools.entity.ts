@@ -1,4 +1,3 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import {
   Entity,
   Column,
@@ -13,7 +12,7 @@ import { Subdistricts } from './subdistricts.entity';
 import { Users } from './users.entity';
 import { SchoolStatus } from 'src/shared/enums/school.enum';
 import { Degree } from './degree.entity';
-import { EntityHelper } from 'src/shared/utils/entity-helper copy';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
 
 @Entity()
 export class Schools extends EntityHelper {

@@ -1,4 +1,4 @@
-import { EntityHelper } from 'src/shared/utils/entity-helper copy';
+import { EntityHelper } from 'src/shared/utils/entity-helper';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()

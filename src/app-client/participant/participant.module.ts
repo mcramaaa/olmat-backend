@@ -8,12 +8,18 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { CashbackSettingModule } from 'src/core/cashback-setting/cashback-setting.module';
+import { PaymentGatewayModule } from '../payment-gateway/payment-gateway.module';
+import { XenditModule } from 'src/vendor/xendit/xendit.module';
+import { SettingModule } from 'src/core/setting/setting.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Participants]),
     SchoolModule,
     CashbackSettingModule,
+    PaymentGatewayModule,
+    XenditModule,
+    SettingModule,
     MulterModule.register({
       storage: diskStorage({
         destination: (req, file, cb) => {

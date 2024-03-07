@@ -1,4 +1,3 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import {
   Entity,
   Column,
@@ -14,6 +13,7 @@ import { Schools } from './schools.entity';
 import { Regions } from './regions.entity';
 import { Exclude } from 'class-transformer';
 import { make } from 'src/shared/utils/hash';
+import { AuditTrail } from 'src/shared/utils/entity-helper';
 
 @Entity()
 export class Users {

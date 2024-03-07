@@ -1,5 +1,4 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
-import { EntityHelper } from 'src/shared/utils/entity-helper copy';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()

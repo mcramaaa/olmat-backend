@@ -1,7 +1,7 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import { Entity, Column, OneToMany } from 'typeorm';
 import { Cities } from './cities.entity';
 import { Users } from './users.entity';
+import { AuditTrail } from 'src/shared/utils/entity-helper';
 
 @Entity()
 export class Regions {

@@ -1,9 +1,8 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import { Entity, Column, ManyToOne } from 'typeorm';
 import { Payments } from './payments.entity';
 import { Schools } from './schools.entity';
-import { EntityHelper } from 'src/shared/utils/entity-helper copy';
 import { ParticipantStatus } from 'src/shared/enums/participants.enum';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
 
 @Entity()
 export class Participants extends EntityHelper {

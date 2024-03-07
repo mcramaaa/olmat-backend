@@ -18,8 +18,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UserCLientModules } from 'src/app-client/module';
 import { AuthModule } from 'src/auth/auth.module';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { WebhookModule } from 'src/core/webhook/webhook.module';
+import { VendorModule } from 'src/vendor/vendor.module';
+import { AppCacheModule } from 'src/core/cache/cache.module';
+import { SettingModule } from 'src/core/setting/setting.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -70,6 +72,10 @@ import { diskStorage } from 'multer';
     }),
 
     AuthModule,
+    WebhookModule,
+    VendorModule,
+    AppCacheModule,
+    SettingModule,
     ...BackofficeModules,
     ...UserCLientModules,
   ],

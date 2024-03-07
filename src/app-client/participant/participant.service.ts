@@ -19,6 +19,9 @@ import { Degree } from 'src/entities/degree.entity';
 import { unlink } from 'fs';
 import { ErrorException } from 'src/shared/exceptions/error.exception';
 import { ulid } from 'ulid';
+import { PaymentGatewayService } from '../payment-gateway/payment-gateway.service';
+import { XenditService } from 'src/vendor/xendit/xendit.service';
+import { PaymentGroup, PaymentProvider } from 'src/shared/enums/payment.enum';
 
 @Injectable()
 export class ParticipantService {
@@ -28,6 +31,8 @@ export class ParticipantService {
     private datasource: DataSource,
     private schoolService: SchoolService,
     private cashbackSettingService: CashbackSettingService,
+    private paymentGatewaryService: PaymentGatewayService,
+    private readonly xenditService: XenditService,
   ) {}
 
   async findManyWithPagination(
@@ -75,6 +80,61 @@ export class ParticipantService {
     });
     if (!school) throw new BadRequestException();
 
+    const payment = await this.paymentGatewaryService.findOne({
+      code: payload.payment_code,
+    });
+
+    const amount = await this.getPrice(
+      typeof payload.participants === 'string'
+        ? 1
+        : payload.participants.length,
+      school.degree,
+    );
+
+    if (!payment) {
+      throw new BadRequestException('invalid paymnet');
+    } else if (amount > payment.max_amount) {
+      throw new BadRequestException(
+        `The selected payment method is a maximum ${payment.max_amount}`,
+      );
+    } else if (amount < payment.min_amount) {
+      throw new BadRequestException(
+        `The selected payment method is a minimum ${payment.min_amount}`,
+      );
+    }
+
+    const payment_fee = Number(
+      (await this.paymentGatewaryService.getFee(amount, payment)).toFixed(),
+    );
+
+    const total_amount = amount + payment_fee;
+
+    const invoice = ulid();
+
+    const currentDate = new Date();
+    const expiredDate = new Date(currentDate);
+    expiredDate.setDate(new Date().getDate() + 1);
+    const formattedExpiredDate = expiredDate.toISOString();
+
+    let payment_action: object = {};
+
+    if (payment.provider === PaymentProvider.XENDIT) {
+      if (payment.group === PaymentGroup.QRIS) {
+        const res = await this.xenditService.createQRCode({
+          reference_id: invoice,
+          amount: total_amount,
+          type: 'DYNAMIC',
+          currency: 'IDR',
+          expires_at: formattedExpiredDate,
+        });
+        payment_action = {
+          id: res?.id,
+          type: res?.type,
+          channel_code: res?.channel_code,
+          qr_string: res?.qr_string,
+        };
+      }
+    }
     const queryRunner = this.datasource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -94,19 +154,10 @@ export class ParticipantService {
             typeof payload.participants === 'string'
               ? 1
               : payload.participants.length,
-          action: {
-            id: 'qr_51026ab3-7c75-4624-86f6-0a6173ac1b10',
-            type: 'DYNAMIC',
-            qr_string:
-              '00020101021226570011ID.DANA.WWW011893600915043047346302094304734630303UKE51440014ID.CO.QRIS.WWW0215ID20232587129750303UKE5204899953033605405844695802ID5911Magner Care6013Kota Surabaya61056018762720115e8kGDd1pJDVLEo360490011ID.DANA.WWW0425MER202107140077450960864105011630405D7',
-            channel_code: 'ID_DANA',
-          },
-          amount: await this.getPrice(
-            typeof payload.participants === 'string'
-              ? 1
-              : payload.participants.length,
-            school.degree,
-          ),
+          action: payment_action,
+          fee: payment_fee,
+          total_amount,
+          amount,
           user,
         }),
       );

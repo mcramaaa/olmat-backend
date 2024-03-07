@@ -1,4 +1,3 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import {
   Entity,
   Column,
@@ -8,6 +7,7 @@ import {
 } from 'typeorm';
 import { Cities } from './cities.entity';
 import { Schools } from './schools.entity';
+import { AuditTrail } from 'src/shared/utils/entity-helper';
 
 @Entity()
 export class Subdistricts {
