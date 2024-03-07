@@ -19,7 +19,7 @@ import { SETTING_XENDIT } from 'src/shared/constants/setting';
 @ApiBearerAuth()
 @UseGuards(AuthAdminGuard)
 @Controller({
-  path: '/backoffice/settings',
+  path: 'backoffice/settings',
   version: '1',
 })
 export class SettingController {

@@ -10,6 +10,8 @@ import { SubdistrictModule } from './subdistrict/subdistrict.module';
 import { UserModule } from './user/user.module';
 import { DegreeModule } from './degree/degree.module';
 import { PaymentModule } from './payment/payment.module';
+import { SettingModule } from 'src/core/setting/setting.module';
+import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
 
 export const BackofficeModules = [
   AuthAdminModule,
@@ -24,4 +26,6 @@ export const BackofficeModules = [
   UserModule,
   DegreeModule,
   PaymentModule,
+  SettingModule,
+  PaymentGatewayModule,
 ];
