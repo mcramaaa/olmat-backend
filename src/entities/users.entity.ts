@@ -13,10 +13,10 @@ import { Schools } from './schools.entity';
 import { Regions } from './regions.entity';
 import { Exclude } from 'class-transformer';
 import { make } from 'src/shared/utils/hash';
-import { AuditTrail } from 'src/shared/utils/entity-helper';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
 
 @Entity()
-export class Users {
+export class Users extends EntityHelper {
   @PrimaryGeneratedColumn()
   id: string;
 

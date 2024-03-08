@@ -1,6 +1,7 @@
 import {
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -16,6 +17,7 @@ import { customPagination } from 'src/shared/utils/pagination';
 import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 import { SchoolService } from './school.service';
 import { Schools } from 'src/entities/schools.entity';
+import { NullableType } from 'src/shared/types/nullable.type';
 
 @ApiTags('School')
 @ApiBearerAuth()
@@ -30,30 +32,74 @@ export class SchoolController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
+  @ApiQuery({ name: 'region_id', required: false, example: 'BNDUG' })
+  @ApiQuery({ name: 'province_id', required: true, example: '32' })
+  @ApiQuery({ name: 'city_id', required: true, example: '3273' })
+  @ApiQuery({ name: 'subdistric_id', required: true, example: '2537' })
+  @ApiQuery({ name: 'degree_id', required: true, example: '02' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('region_id') region_id: string,
+    @Query('province_id') province_id: string,
+    @Query('city_id') city_id: string,
+    @Query('subdistric_id') subdistric_id: string,
+    @Query('degree_id') degree_id: string,
   ): Promise<PaginationResultType<Schools>> {
-    const [data, count] = await this.schoolService.findManyWithPagination({
-      page,
-      limit,
-    });
+    const [data, count] = await this.schoolService.findManyWithPagination(
+      {
+        page,
+        limit,
+      },
+      {
+        region_id,
+        province_id,
+        city_id,
+        subdistric_id,
+        degree_id,
+      },
+    );
 
     return customPagination(data, count, { page, limit });
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id') id: number): Promise<NullableType<Schools>> {
+    return await this.schoolService.findOne({ id });
   }
 
   @Get('/request-lists')
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
+  @ApiQuery({ name: 'region_id', required: false, example: 'BNDUG' })
+  @ApiQuery({ name: 'province_id', required: true, example: '32' })
+  @ApiQuery({ name: 'city_id', required: true, example: '3273' })
+  @ApiQuery({ name: 'subdistric_id', required: true, example: '2537' })
+  @ApiQuery({ name: 'degree_id', required: true, example: '02' })
   async requestLists(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('region_id') region_id: string,
+    @Query('province_id') province_id: string,
+    @Query('city_id') city_id: string,
+    @Query('subdistric_id') subdistric_id: string,
+    @Query('degree_id') degree_id: string,
   ): Promise<PaginationResultType<Schools>> {
-    const [data, count] = await this.schoolService.schoolRequesList({
-      page,
-      limit,
-    });
+    const [data, count] = await this.schoolService.schoolRequesList(
+      {
+        page,
+        limit,
+      },
+      {
+        region_id,
+        province_id,
+        city_id,
+        subdistric_id,
+        degree_id,
+      },
+    );
 
     return customPagination(data, count, { page, limit });
   }
@@ -62,5 +108,11 @@ export class SchoolController {
   @HttpCode(HttpStatus.OK)
   async acceptSchool(@Param('school_id') school_id: number) {
     return await this.schoolService.acceptSchool(school_id);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteSchool(@Param('id') id: number): Promise<void> {
+    return await this.schoolService.deleteSchool(id);
   }
 }
