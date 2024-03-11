@@ -33,10 +33,10 @@ export class SchoolController {
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
   @ApiQuery({ name: 'region_id', required: false, example: 'BNDUG' })
-  @ApiQuery({ name: 'province_id', required: true, example: '32' })
-  @ApiQuery({ name: 'city_id', required: true, example: '3273' })
-  @ApiQuery({ name: 'subdistric_id', required: true, example: '2537' })
-  @ApiQuery({ name: 'degree_id', required: true, example: '02' })
+  @ApiQuery({ name: 'province_id', required: false, example: '32' })
+  @ApiQuery({ name: 'city_id', required: false, example: '3273' })
+  @ApiQuery({ name: 'subdistric_id', required: false, example: '2537' })
+  @ApiQuery({ name: 'degree_id', required: false, example: '02' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
@@ -74,10 +74,10 @@ export class SchoolController {
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
   @ApiQuery({ name: 'region_id', required: false, example: 'BNDUG' })
-  @ApiQuery({ name: 'province_id', required: true, example: '32' })
-  @ApiQuery({ name: 'city_id', required: true, example: '3273' })
-  @ApiQuery({ name: 'subdistric_id', required: true, example: '2537' })
-  @ApiQuery({ name: 'degree_id', required: true, example: '02' })
+  @ApiQuery({ name: 'province_id', required: false, example: '32' })
+  @ApiQuery({ name: 'city_id', required: false, example: '3273' })
+  @ApiQuery({ name: 'subdistric_id', required: false, example: '2537' })
+  @ApiQuery({ name: 'degree_id', required: false, example: '02' })
   async requestLists(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
