@@ -28,7 +28,7 @@ import { NullableType } from 'src/shared/types/nullable.type';
 })
 export class SchoolController {
   constructor(private schoolService: SchoolService) {}
-  @Get()
+  @Get('/')
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
@@ -63,13 +63,7 @@ export class SchoolController {
     return customPagination(data, count, { page, limit });
   }
 
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id') id: number): Promise<NullableType<Schools>> {
-    return await this.schoolService.findOne({ id });
-  }
-
-  @Get('/request-lists')
+  @Get('request-listsss')
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
@@ -87,6 +81,7 @@ export class SchoolController {
     @Query('subdistric_id') subdistric_id: string,
     @Query('degree_id') degree_id: string,
   ): Promise<PaginationResultType<Schools>> {
+    console.log('here');
     const [data, count] = await this.schoolService.schoolRequesList(
       {
         page,
@@ -102,6 +97,12 @@ export class SchoolController {
     );
 
     return customPagination(data, count, { page, limit });
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id') id: number): Promise<NullableType<Schools>> {
+    return await this.schoolService.findOne({ id });
   }
 
   @Patch('/accept/:school_id')
