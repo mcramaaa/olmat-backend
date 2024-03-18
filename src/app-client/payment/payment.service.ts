@@ -33,4 +33,20 @@ export class PaymentService {
   ): Promise<NullableType<Payments>> {
     return await this.paymentRepository.findOne({ where: condition });
   }
+
+  async getPendingPayment(user: Users): Promise<Payments[]> {
+    return await this.paymentRepository.find({
+      select: {
+        id: true,
+        invoice: true,
+        code: true,
+        participant_amounts: true,
+        fee: true,
+        amount: true,
+        total_amount: true,
+        status: true,
+      },
+      where: { user: { id: user.id } },
+    });
+  }
 }

@@ -14,6 +14,7 @@ import { Regions } from './regions.entity';
 import { Exclude } from 'class-transformer';
 import { make } from 'src/shared/utils/hash';
 import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
+import { Participants } from './participants.entity';
 
 @Entity()
 export class Users extends EntityHelper {
@@ -57,6 +58,9 @@ export class Users extends EntityHelper {
 
   @OneToMany(() => Payments, (payment) => payment.user)
   payments: Payments[];
+
+  @OneToMany(() => Participants, (participant) => participant.user)
+  participants: Participants[];
 
   @ManyToOne(() => Schools, (school) => school.users, {
     nullable: false,

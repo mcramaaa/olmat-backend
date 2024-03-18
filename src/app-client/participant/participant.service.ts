@@ -175,6 +175,7 @@ export class ParticipantService {
             email: objParticipant.email,
             birth: objParticipant.birth,
             img: imgs[0],
+            user: { id: user.id },
             attachment: attachments[0],
             school,
             payment,
@@ -210,6 +211,7 @@ export class ParticipantService {
                   phone: objParticipant.phone,
                   email: objParticipant.email,
                   birth: objParticipant.birth,
+                  user: { id: user.id },
                   img: imgs[i],
                   attachment: attachments[i],
                   school,
@@ -242,6 +244,7 @@ export class ParticipantService {
         participants,
       };
     } catch (error: any) {
+      console.log('here', error);
       imgs.map(async (img) => {
         await unlink('./storage/imgs/' + img, (err) => {
           if (err) throw err;

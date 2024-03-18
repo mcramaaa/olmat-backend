@@ -12,6 +12,7 @@ import { DegreeModule } from './degree/degree.module';
 import { PaymentModule } from './payment/payment.module';
 import { SettingModule } from 'src/core/setting/setting.module';
 import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 export const BackofficeModules = [
   AuthAdminModule,
@@ -28,4 +29,5 @@ export const BackofficeModules = [
   PaymentModule,
   SettingModule,
   PaymentGatewayModule,
+  DashboardModule,
 ];

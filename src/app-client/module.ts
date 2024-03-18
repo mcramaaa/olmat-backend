@@ -4,6 +4,7 @@ import { SchoolModule } from './school/school.module';
 import { LocationApiModule } from './location-api/location-api.module';
 import { ParticipantModule } from './participant/participant.module';
 import { PaymentModule } from './payment/payment.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 export const UserCLientModules = [
   UserModule,
@@ -12,4 +13,5 @@ export const UserCLientModules = [
   SchoolModule,
   ParticipantModule,
   PaymentModule,
+  DashboardModule,
 ];

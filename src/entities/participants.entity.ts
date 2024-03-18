@@ -3,6 +3,7 @@ import { Payments } from './payments.entity';
 import { Schools } from './schools.entity';
 import { ParticipantStatus } from 'src/shared/enums/participants.enum';
 import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
+import { Users } from './users.entity';
 
 @Entity()
 export class Participants extends EntityHelper {
@@ -46,6 +47,11 @@ export class Participants extends EntityHelper {
     nullable: false,
   })
   school: Schools;
+
+  @ManyToOne(() => Users, (user) => user.participants, {
+    nullable: false,
+  })
+  user: Users;
 
   @Column(() => AuditTrail, { prefix: false })
   audit_trail: AuditTrail;
