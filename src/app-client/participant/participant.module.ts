@@ -6,17 +6,16 @@ import { Participants } from 'src/entities/participants.entity';
 import { SchoolModule } from '../school/school.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { CashbackSettingModule } from 'src/core/cashback-setting/cashback-setting.module';
 import { PaymentGatewayModule } from '../payment-gateway/payment-gateway.module';
 import { XenditModule } from 'src/vendor/xendit/xendit.module';
 import { SettingModule } from 'src/core/setting/setting.module';
+import { EventSettingModule } from 'src/core/event-setting/event-setting.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Participants]),
     SchoolModule,
-    CashbackSettingModule,
+    EventSettingModule,
     PaymentGatewayModule,
     XenditModule,
     SettingModule,
@@ -39,12 +38,11 @@ import { SettingModule } from 'src/core/setting/setting.module';
             );
             cb(null, file.fieldname + '-' + uniqueSuffix + '.webp');
           } else {
-            const extension = extname(file.originalname).toLowerCase();
             req['attachmentFileNames'] = req['attachmentFileNames'] || [];
             req['attachmentFileNames'].push(
-              file.fieldname + '-' + uniqueSuffix + extension,
+              file.fieldname + '-' + uniqueSuffix + '.webp',
             );
-            cb(null, file.fieldname + '-' + uniqueSuffix + extension);
+            cb(null, file.fieldname + '-' + uniqueSuffix + '.webp');
           }
         },
       }),

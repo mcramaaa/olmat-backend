@@ -6,6 +6,7 @@ import {
   Post,
   UseGuards,
   Body,
+  Patch,
 } from '@nestjs/common';
 import { AuthUserService } from './auth-user.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -18,6 +19,7 @@ import { Users } from 'src/entities/users.entity';
 import { OtpDto } from '../dto/otp.dto';
 import { HashDTO } from '../dto/hash.dto';
 import { AuthUserLoginDto } from '../dto/auth-user-login.dto';
+import { UpdateUserAuthDTO } from './dto/update-user-auth.dto';
 
 @ApiTags('Auth User')
 @Controller({
@@ -85,5 +87,16 @@ export class AuthUserController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@SessionUser() user: Users): Promise<OkResponse<void>> {
     return okTransform(await this.service.logout(user.id));
+  }
+
+  @ApiBearerAuth()
+  @Patch('/update-me')
+  @UseGuards(AuthUserGuard)
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @SessionUser() user: Users,
+    @Body() userDto: UpdateUserAuthDTO,
+  ): Promise<OkResponse<{ name: string; phone: string; email: string }>> {
+    return okTransform(await this.service.update(user, userDto));
   }
 }

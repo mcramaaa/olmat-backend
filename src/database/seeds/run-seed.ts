@@ -9,7 +9,7 @@ import { DegreeSeedService } from './degree-seed/degree-seed.service';
 import { SchoolSeedService } from './school-seed/school-seed.service';
 import { UserSeedService } from './user-seed/user-seed.service';
 import { PaymentGatewaySeedService } from './payment-gateway-seed/payment-gateway-seed.service';
-import { CashbackSettingSeedService } from './cashback-setting-seed/cashback-setting-seed.service';
+import { EventSettingSeedService } from './event-setting-seed/event-setting-seed.service';
 
 const runSeed = async () => {
   const app = await NestFactory.create(SeedModule);
@@ -23,7 +23,7 @@ const runSeed = async () => {
   await app.get(SchoolSeedService).run();
   await app.get(UserSeedService).run();
   await app.get(PaymentGatewaySeedService).run();
-  await app.get(CashbackSettingSeedService).run();
+  await app.get(EventSettingSeedService).run();
 
   await app.close();
 };

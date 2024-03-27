@@ -22,6 +22,7 @@ import { WebhookModule } from 'src/core/webhook/webhook.module';
 import { VendorModule } from 'src/vendor/vendor.module';
 import { AppCacheModule } from 'src/core/cache/cache.module';
 import { SettingModule } from 'src/core/setting/setting.module';
+import { EventSettingModule } from 'src/core/event-setting/event-setting.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -75,8 +76,8 @@ import { SettingModule } from 'src/core/setting/setting.module';
     WebhookModule,
     VendorModule,
     AppCacheModule,
-    ...BackofficeModules,
     SettingModule,
+    ...BackofficeModules,
     ...UserCLientModules,
   ],
   controllers: [AppController],

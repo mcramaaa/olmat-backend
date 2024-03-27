@@ -14,7 +14,6 @@ import { SchoolService } from '../school/school.service';
 import { Payments } from 'src/entities/payments.entity';
 import { Users } from 'src/entities/users.entity';
 import { rtrim0 } from 'src/shared/utils/rtrim.helper';
-import { CashbackSettingService } from 'src/core/cashback-setting/cashback-setting.service';
 import { Degree } from 'src/entities/degree.entity';
 import { unlink } from 'fs';
 import { ErrorException } from 'src/shared/exceptions/error.exception';
@@ -22,6 +21,7 @@ import { ulid } from 'ulid';
 import { PaymentGatewayService } from '../payment-gateway/payment-gateway.service';
 import { XenditService } from 'src/vendor/xendit/xendit.service';
 import { PaymentGroup, PaymentProvider } from 'src/shared/enums/payment.enum';
+import { EventSettingService } from 'src/core/event-setting/event-setting.service';
 
 @Injectable()
 export class ParticipantService {
@@ -30,7 +30,7 @@ export class ParticipantService {
     private repository: Repository<Participants>,
     private datasource: DataSource,
     private schoolService: SchoolService,
-    private cashbackSettingService: CashbackSettingService,
+    private eventSettingService: EventSettingService,
     private paymentGatewaryService: PaymentGatewayService,
     private readonly xenditService: XenditService,
   ) {}
@@ -57,7 +57,7 @@ export class ParticipantService {
   }
 
   private async getPrice(length: number, degree: Degree) {
-    const cashbackSetting = await this.cashbackSettingService.find();
+    const cashbackSetting = await this.eventSettingService.find();
     const cashback =
       Math.floor(length / +cashbackSetting.amount) * cashbackSetting.free;
     let price = degree.register_price * length;
@@ -244,7 +244,6 @@ export class ParticipantService {
         participants,
       };
     } catch (error: any) {
-      console.log('here', error);
       imgs.map(async (img) => {
         await unlink('./storage/imgs/' + img, (err) => {
           if (err) throw err;

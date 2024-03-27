@@ -25,7 +25,7 @@ export class UserService {
     });
   }
 
-  async update(id: string, payload: UpdateUserDto): Promise<void> {
+  async update(id: string, payload: UpdateUserDto): Promise<Users> {
     const user = await this.findOne({ id });
     if (!user) {
       throw new BadRequestException();
@@ -75,13 +75,22 @@ export class UserService {
             HttpStatus.UNPROCESSABLE_ENTITY,
           );
         }
-        const strongPasswordPattern =
-          /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]|\\;:'",.<>/?]).{8,}$/;
-        if (!strongPasswordPattern.test(payload.password)) {
+        // const strongPasswordPattern =
+        //   /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]|\\;:'",.<>/?]).{8,}$/;
+        // if (!strongPasswordPattern.test(payload.password)) {
+        //   throw new ErrorException(
+        //     {
+        //       password:
+        //         'Minimal 6 character, 1 Upercase, 1 lowercase, 1 special character',
+        //     },
+        //     HttpStatus.UNPROCESSABLE_ENTITY,
+        //   );
+        // }
+
+        if (payload.password.length < 8) {
           throw new ErrorException(
             {
-              password:
-                'Minimal 6 character, 1 Upercase, 1 lowercase, 1 special character',
+              password: 'Minimal 8 character',
             },
             HttpStatus.UNPROCESSABLE_ENTITY,
           );
@@ -98,7 +107,7 @@ export class UserService {
     }
 
     try {
-      await user.save();
+      return await user.save();
     } catch (error) {
       throw new InternalServerErrorException();
     }

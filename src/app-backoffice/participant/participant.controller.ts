@@ -7,13 +7,20 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
+  Put,
+  Param,
+  Body,
+  Req,
 } from '@nestjs/common';
 import { customPagination } from 'src/shared/utils/pagination';
 import { PaginationResultType } from 'src/shared/types/pagination-result.type';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 import { ParticipantService } from './participant.service';
 import { Participants } from 'src/entities/participants.entity';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UpdateParticipantDTO } from './dto/update-participant.dto';
 
 @ApiTags('Participant')
 @ApiBearerAuth()
@@ -38,5 +45,26 @@ export class ParticipantController {
     });
 
     return customPagination(data, count, { page, limit });
+  }
+
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'img', maxCount: 1 },
+      { name: 'attachment', maxCount: 1 },
+    ]),
+  )
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() payload: UpdateParticipantDTO,
+    @Req() req: { imgFileName: string; attachmentFileName: string },
+  ) {
+    return await this.participantService.update(
+      payload,
+      id,
+      req.imgFileName,
+      req.attachmentFileName,
+    );
   }
 }

@@ -15,7 +15,7 @@ import { DegreeSeedModule } from './degree-seed/degree-seed.module';
 import { SchoolSeedModule } from './school-seed/school-seed.module';
 import { UserSeedModule } from './user-seed/user-seed.module';
 import { PaymentGatewaySeedModule } from './payment-gateway-seed/payment-gateway-seed.module';
-import { CashbackSettingSeedModule } from './cashback-setting-seed/cashback-setting-seed.module';
+import { EventSettingSeedModule } from './event-setting-seed/event-setting-seed.module';
 
 @Module({
   imports: [
@@ -39,7 +39,7 @@ import { CashbackSettingSeedModule } from './cashback-setting-seed/cashback-sett
     SchoolSeedModule,
     UserSeedModule,
     PaymentGatewaySeedModule,
-    CashbackSettingSeedModule,
+    EventSettingSeedModule,
   ],
 })
 export class SeedModule {}

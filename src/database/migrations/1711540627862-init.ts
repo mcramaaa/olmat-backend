@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Init1710768256875 implements MigrationInterface {
-  name = 'Init1710768256875';
+export class Init1711540627862 implements MigrationInterface {
+  name = 'Init1711540627862';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -38,7 +38,7 @@ export class Init1710768256875 implements MigrationInterface {
       `CREATE TABLE \`setting\` (\`id\` int NOT NULL AUTO_INCREMENT, \`key\` varchar(255) NOT NULL, \`value\` longtext NOT NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`created_by\` varchar(255) NULL DEFAULT 'System', \`updated_at\` datetime(6) NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), \`updated_by\` timestamp NULL, UNIQUE INDEX \`IDX_1c4c95d773004250c157a744d6\` (\`key\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`cashback_settings\` (\`id\` int NOT NULL AUTO_INCREMENT, \`amount\` int UNSIGNED NOT NULL, \`free\` int UNSIGNED NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`event_settings\` (\`id\` int NOT NULL AUTO_INCREMENT, \`start\` timestamp(6) NOT NULL, \`end\` timestamp(6) NOT NULL, \`amount\` int UNSIGNED NOT NULL, \`free\` int UNSIGNED NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `CREATE TABLE \`admin_role\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`permissions\` text NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`created_by\` varchar(255) NULL DEFAULT 'System', \`updated_at\` datetime(6) NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), \`updated_by\` timestamp NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
@@ -144,7 +144,7 @@ export class Init1710768256875 implements MigrationInterface {
     );
     await queryRunner.query(`DROP TABLE \`admins\``);
     await queryRunner.query(`DROP TABLE \`admin_role\``);
-    await queryRunner.query(`DROP TABLE \`cashback_settings\``);
+    await queryRunner.query(`DROP TABLE \`event_settings\``);
     await queryRunner.query(
       `DROP INDEX \`IDX_1c4c95d773004250c157a744d6\` ON \`setting\``,
     );

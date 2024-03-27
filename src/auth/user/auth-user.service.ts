@@ -29,6 +29,7 @@ import { AuthUserLoginDto } from '../dto/auth-user-login.dto';
 import { LoginResponseType } from 'src/shared/types/auth/login-response.type';
 import { ErrorException } from 'src/shared/exceptions/error.exception';
 import { compare } from 'src/shared/utils/hash';
+import { UpdateUserAuthDTO } from './dto/update-user-auth.dto';
 
 @Injectable()
 export class AuthUserService {
@@ -289,5 +290,62 @@ export class AuthUserService {
 
   async logout(token: string): Promise<void> {
     await this.cacheService.remove(formatString(CACHE_KEY_AUTH.SESSION, token));
+  }
+
+  async update(
+    user: Users,
+    userDto: UpdateUserAuthDTO,
+  ): Promise<{ name: string; email: string; phone: string }> {
+    const currentUser = await this.usersService.findOne({
+      id: user.id,
+    });
+
+    if (!currentUser) {
+      throw new ErrorException(
+        {
+          user: 'userNotFound',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (userDto.password) {
+      if (userDto.currentPassword) {
+        const isValidCurrentPassword = compare(
+          userDto.currentPassword,
+          currentUser.password,
+        );
+
+        if (!isValidCurrentPassword) {
+          throw new ErrorException(
+            {
+              currentPassword: 'incorrectCurrentPassword',
+            },
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
+        }
+        if (userDto.password == userDto.currentPassword) {
+          throw new ErrorException(
+            {
+              password: 'password not changed',
+            },
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
+        }
+      } else {
+        throw new ErrorException(
+          {
+            currentPassword: 'missingCurrentPassword',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
+    const { name, email, phone } = await this.usersService.update(
+      user.id,
+      userDto,
+    );
+    return { name, email, phone };
   }
 }

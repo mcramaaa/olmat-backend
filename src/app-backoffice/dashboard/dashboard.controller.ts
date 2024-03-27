@@ -9,13 +9,13 @@ import { DashboardService } from './dashboard.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 
-ApiTags('Dashboard');
 @ApiBearerAuth()
 @UseGuards(AuthAdminGuard)
 @Controller({
-  path: 'backoffice/dashboard',
+  path: 'backoffice/dashboardd',
   version: '1',
 })
+@ApiTags('Dashboard')
 export class DashboardController {
   constructor(private dashboardService: DashboardService) {}
 

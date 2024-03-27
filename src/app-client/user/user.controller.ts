@@ -12,6 +12,7 @@ import { UserService } from './user.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthUserGuard } from 'src/shared/guards/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Users } from 'src/entities/users.entity';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -33,7 +34,7 @@ export class UserController {
   async update(
     @Param('id') id: string,
     @Body() payload: UpdateUserDto,
-  ): Promise<void> {
+  ): Promise<Users> {
     return await this.userService.update(id, payload);
   }
 }
