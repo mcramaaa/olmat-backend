@@ -63,7 +63,7 @@ export class SchoolController {
     return customPagination(data, count, { page, limit });
   }
 
-  @Get('request-listsss')
+  @Get('request-lists')
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })

@@ -12,7 +12,7 @@ import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 @ApiBearerAuth()
 @UseGuards(AuthAdminGuard)
 @Controller({
-  path: 'backoffice/dashboardd',
+  path: 'backoffice/dashboard',
   version: '1',
 })
 @ApiTags('Dashboard')

@@ -14,11 +14,9 @@ export class DegreeSeedService {
     if (count === 0) {
       await this.repository.query(`
              INSERT INTO degree (id, name, register_price) VALUES
-                ('01', 'SMA', 100000),
-                ('02', 'SMP', 75000),
-                ('03', 'MTS', 75000),
-                ('04', 'SD', 50000),
-                ('05', 'MI', 50000);
+                ('01', 'SMA', 60000),
+                ('02', 'SMP', 55000),
+                ('03', 'SD', 50000);
             `);
     }
   }
