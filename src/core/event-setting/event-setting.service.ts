@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventSettings } from 'src/entities/event-settings.entity';
 import { Repository } from 'typeorm';
 import { CreateEventSettingDTO } from './dto/create-event-setting.dto';
+import { IPaginationOptions } from 'src/shared/types/pagination-options';
 
 @Injectable()
 export class EventSettingService {
@@ -13,6 +14,20 @@ export class EventSettingService {
 
   async find(): Promise<EventSettings> {
     return await this.eventSettingRepo.findOne({ where: {} });
+  }
+
+  async findManyWithPagination(
+    paginationOptions: IPaginationOptions,
+  ): Promise<[EventSettings[], number]> {
+    try {
+      return await this.eventSettingRepo.findAndCount({
+        skip: (paginationOptions.page - 1) * paginationOptions.limit,
+        take: paginationOptions.limit,
+        where: {},
+      });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async create(payload: CreateEventSettingDTO): Promise<void> {
