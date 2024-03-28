@@ -13,10 +13,16 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from 'src/shared/guards/role.guard';
 import cacheConfig from 'src/shared/config/cache.config';
-import { CacheConfig } from 'src/shared/types/config.type';
+import { RedisClientOptions } from 'redis';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { UserCLientModules } from 'src/app-client/module';
 import { AuthModule } from 'src/auth/auth.module';
-import * as redisStore from 'cache-manager-redis-store';
-
+import { WebhookModule } from 'src/core/webhook/webhook.module';
+import { VendorModule } from 'src/vendor/vendor.module';
+import { AppCacheModule } from 'src/core/cache/cache.module';
+import { SettingModule } from 'src/core/setting/setting.module';
+import { EventSettingModule } from 'src/core/event-setting/event-setting.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,16 +30,21 @@ import * as redisStore from 'cache-manager-redis-store';
       load: [databaseConfig, appConfig, authConfig, cacheConfig],
       envFilePath: ['.env'],
     }),
-    CacheModule.register({
+    EventEmitterModule.forRoot({
+      global: true,
+      verboseMemoryLeak: true,
+    }),
+    CacheModule.registerAsync<RedisClientOptions>({
       isGlobal: true,
-      useFactory: async (configService: ConfigService<CacheConfig>) => ({
-        store: redisStore as any,
-        host: configService.get('host'),
-        max: configService.get('max'),
-        ttl: configService.get('ttl'),
-        port: configService.get('port'),
-        auth_pass: configService.get('auth_pass'),
-        db: configService.get('db'),
+      useFactory: () => ({
+        isGlobal: true,
+        store: require('cache-manager-redis-store'),
+        host: process.env.CACHE_HOST,
+        max: Number(process.env.CACHE_MAX),
+        ttl: Number(process.env.CACHE_TTL),
+        port: Number(process.env.CACHE_PORT),
+        auth_pass: process.env.CACHE_PASS,
+        db: Number(process.env.CACHE_DB),
       }),
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -44,8 +55,30 @@ import * as redisStore from 'cache-manager-redis-store';
         return new DataSource(options).initialize();
       },
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'mail.olmat-uinsa.com',
+        port: 465,
+        // ignoreTLS: true,
+        secure: true,
+        auth: {
+          user: 'olmatuinsa@olmat-uinsa.com',
+          pass: '#OlmatUINSA20',
+        },
+      },
+      // defaults: {
+      //   from: '"No Reply" <no-reply@localhost>',
+      // },
+      // preview: true,
+    }),
+
     AuthModule,
+    WebhookModule,
+    VendorModule,
+    AppCacheModule,
+    SettingModule,
     ...BackofficeModules,
+    ...UserCLientModules,
   ],
   controllers: [AppController],
   providers: [

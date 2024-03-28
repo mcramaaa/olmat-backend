@@ -62,15 +62,11 @@ export class AuthAdminService {
       },
     });
 
-    try {
-      await this.cacheService.set(
-        formatString(CACHE_KEY_AUTH.SESSION, user.id),
-        true,
-        parseTimeToSeconds(this.config.sessionExpires ?? '1h'),
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    await this.cacheService.set(
+      formatString(CACHE_KEY_AUTH.SESSION, user.id),
+      true,
+      parseTimeToSeconds(this.config.sessionExpires ?? '1h'),
+    );
 
     return { token, user };
   }

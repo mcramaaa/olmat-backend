@@ -1,14 +1,23 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
-import { Entity, Column, OneToMany, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Participants } from './participants.entity';
 import { Cities } from './cities.entity';
 import { Provincies } from './provincies.entity';
 import { Subdistricts } from './subdistricts.entity';
+import { Users } from './users.entity';
+import { SchoolStatus } from 'src/shared/enums/school.enum';
+import { Degree } from './degree.entity';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
 
 @Entity()
-export class Schools {
-  @Column({ unique: true, primary: true })
-  id: string;
+export class Schools extends EntityHelper {
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;
@@ -23,22 +32,29 @@ export class Schools {
   phone: string;
 
   @Column()
-  degree: string;
+  whatsapp: string;
 
-  @Column()
-  status: string;
+  @Column({ type: 'enum', enum: SchoolStatus, default: SchoolStatus.HITAM })
+  status: SchoolStatus;
 
-  @Column()
+  @Column({ default: false })
   is_accept: boolean;
 
   @OneToMany(() => Participants, (participant) => participant.school)
   participants: Participants[];
 
+  @OneToMany(() => Users, (user) => user.school)
+  users: Users[];
+
   @ManyToOne(() => Provincies, (province) => province.schools, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   province: Provincies;
+
+  @ManyToOne(() => Degree, (degree) => degree.schools, {
+    nullable: false,
+  })
+  degree: Degree;
 
   @ManyToOne(() => Cities, (city) => city.schools, {
     onDelete: 'CASCADE',

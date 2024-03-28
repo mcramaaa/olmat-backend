@@ -1,39 +1,62 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Participants } from './participants.entity';
 import { Users } from './users.entity';
+import { PaymentGateways } from './payment-gateways.entity';
+import { Expose } from 'class-transformer';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
+import { PaymentStatus } from 'src/shared/enums/payment.enum';
 
 @Entity()
-export class Payments {
+export class Payments extends EntityHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true })
+  invoice: string;
+
+  @Column()
   code: string;
 
-  @Column({ unsigned: true })
-  amount_participants: number;
+  @Column({ type: 'json', nullable: true })
+  action: object;
+
+  @Expose({ groups: ['admin'] })
+  @Column({ type: 'json', nullable: true })
+  callback: object;
 
   @Column({ unsigned: true })
-  payment_amount: number;
+  participant_amounts: number;
 
   @Column({ unsigned: true })
-  status: number;
+  fee: number;
 
   @Column({ unsigned: true })
-  img: number;
+  amount: number;
+
+  @Column({ unsigned: true })
+  total_amount: number;
+
+  @Column({ default: () => 'DATE_ADD(CURRENT_TIMESTAMP() , INTERVAL 24 HOUR)' })
+  expired_at: Date;
+
+  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
+  status: PaymentStatus;
 
   @OneToMany(() => Participants, (participant) => participant.payment)
   participants: Participants[];
 
+  @ManyToOne(() => PaymentGateways)
+  @JoinColumn({ name: 'code', referencedColumnName: 'code' })
+  paymentGateway: PaymentGateways;
+
   @ManyToOne(() => Users, (user) => user.payments, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   user: Users;

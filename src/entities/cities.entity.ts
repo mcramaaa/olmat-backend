@@ -1,9 +1,9 @@
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Provincies } from './provincies.entity';
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import { Regions } from './regions.entity';
 import { Subdistricts } from './subdistricts.entity';
 import { Schools } from './schools.entity';
+import { AuditTrail } from 'src/shared/utils/entity-helper';
 
 @Entity()
 export class Cities {
@@ -14,13 +14,11 @@ export class Cities {
   name: string;
 
   @ManyToOne(() => Provincies, (province) => province.cities, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   province: Provincies;
 
   @ManyToOne(() => Regions, (region) => region.cities, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   region: Regions;

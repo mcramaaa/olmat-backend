@@ -1,10 +1,12 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import { Entity, Column, ManyToOne } from 'typeorm';
 import { Payments } from './payments.entity';
 import { Schools } from './schools.entity';
+import { ParticipantStatus } from 'src/shared/enums/participants.enum';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
+import { Users } from './users.entity';
 
 @Entity()
-export class Participants {
+export class Participants extends EntityHelper {
   @Column({ unique: true, primary: true })
   id: string;
 
@@ -29,20 +31,27 @@ export class Participants {
   @Column()
   attachment: string;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: ParticipantStatus,
+    default: ParticipantStatus.PENDING,
+  })
   status: string;
 
   @ManyToOne(() => Payments, (payment) => payment.participants, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   payment: Payments;
 
   @ManyToOne(() => Schools, (school) => school.participants, {
-    onDelete: 'CASCADE',
     nullable: false,
   })
   school: Schools;
+
+  @ManyToOne(() => Users, (user) => user.participants, {
+    nullable: false,
+  })
+  user: Users;
 
   @Column(() => AuditTrail, { prefix: false })
   audit_trail: AuditTrail;

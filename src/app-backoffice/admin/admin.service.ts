@@ -12,8 +12,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { ErrorException } from 'src/shared/exceptions/error.exception';
-import { compare } from 'src/shared/utils/hash';
 import { AdminRoleService } from '../admin-role/admin-role.service';
+import { IPaginationOptions } from 'src/shared/types/pagination-options';
 
 @Injectable()
 export class AdminService {
@@ -22,6 +22,19 @@ export class AdminService {
     private adminsRepository: Repository<Admins>,
     private roleService: AdminRoleService,
   ) {}
+  async findManyWithPagination(
+    paginationOptions: IPaginationOptions,
+  ): Promise<[Admins[], number]> {
+    try {
+      return await this.adminsRepository.findAndCount({
+        skip: (paginationOptions.page - 1) * paginationOptions.limit,
+        take: paginationOptions.limit,
+        relations: { role: true },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 
   async findOne(condition: EntityCondition<Admins>): Promise<Admins> {
     const admin = await this.adminsRepository.findOne({
@@ -65,7 +78,7 @@ export class AdminService {
     );
   }
 
-  async update(id: string, payload: UpdateAdminDto): Promise<Admins> {
+  async update(id: number, payload: UpdateAdminDto): Promise<Admins> {
     const currentUser = await this.findOne({
       id: +id,
     });
@@ -79,36 +92,36 @@ export class AdminService {
       );
     }
 
-    if (payload.password)
-      if (payload.curent_password) {
-        const isValidCurrentPassword = compare(
-          payload.curent_password,
-          currentUser.password,
-        );
-        if (!isValidCurrentPassword) {
-          throw new ErrorException(
-            {
-              currentPassword: 'incorrectCurrentPassword',
-            },
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-        }
-        if (payload.curent_password === payload.password) {
-          throw new ErrorException(
-            {
-              password: 'password not changed',
-            },
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-        }
-      } else {
-        throw new ErrorException(
-          {
-            currentPassword: 'missingCurrentPassword',
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
+    // if (payload.password)
+    //   if (payload.curent_password) {
+    //     const isValidCurrentPassword = compare(
+    //       payload.curent_password,
+    //       currentUser.password,
+    //     );
+    //     if (!isValidCurrentPassword) {
+    //       throw new ErrorException(
+    //         {
+    //           currentPassword: 'incorrectCurrentPassword',
+    //         },
+    //         HttpStatus.UNPROCESSABLE_ENTITY,
+    //       );
+    //     }
+    //     if (payload.curent_password === payload.password) {
+    //       throw new ErrorException(
+    //         {
+    //           password: 'password not changed',
+    //         },
+    //         HttpStatus.UNPROCESSABLE_ENTITY,
+    //       );
+    //     }
+    //   } else {
+    //     throw new ErrorException(
+    //       {
+    //         currentPassword: 'missingCurrentPassword',
+    //       },
+    //       HttpStatus.UNPROCESSABLE_ENTITY,
+    //     );
+    //   }
 
     if (payload.role_id) {
       const curentRole = await this.roleService.findOne({
@@ -123,6 +136,8 @@ export class AdminService {
           HttpStatus.NOT_FOUND,
         );
       }
+
+      currentUser.role = curentRole;
     }
 
     if (payload.email) {
@@ -134,14 +149,15 @@ export class AdminService {
           HttpStatus.NOT_ACCEPTABLE,
         );
       }
+      currentUser.email = payload.email;
     }
 
-    return await this.adminsRepository.save(
-      this.adminsRepository.create({ id: +id, ...payload }),
-    );
+    currentUser.name = payload.name;
+
+    return currentUser.save();
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> {
     try {
       await this.adminsRepository.delete(id);
     } catch (error) {

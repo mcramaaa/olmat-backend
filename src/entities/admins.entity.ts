@@ -1,4 +1,3 @@
-import { AuditTrail } from 'src/shared/utils/entity-helper';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,8 +9,8 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { make } from 'src/shared/utils/hash';
-import { EntityHelper } from 'src/shared/utils/entity-helper copy';
 import { AdminRole } from './admin-role.entity';
+import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
 
 @Entity()
 export class Admins extends EntityHelper {

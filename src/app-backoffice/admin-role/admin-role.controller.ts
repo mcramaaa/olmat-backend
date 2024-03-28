@@ -22,14 +22,14 @@ import { OkResponse, okTransform } from 'src/shared/utils/ok-response';
 import { customPagination } from 'src/shared/utils/pagination';
 import { PaginationResultType } from 'src/shared/types/pagination-result.type';
 import { NullableType } from 'src/shared/types/nullable.type';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 
 @ApiTags('Admin Role')
 @ApiBearerAuth()
 @UseGuards(AuthAdminGuard)
 @Controller({
-  path: '/admin-role',
+  path: 'backoffice/admin-role',
   version: '1',
 })
 export class AdminRoleController {
@@ -43,8 +43,8 @@ export class AdminRoleController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  // @ApiQuery({ name: 'page', required: true, example: 1 })
-  // @ApiQuery({ name: 'limit', required: true, example: 10 })
+  @ApiQuery({ name: 'page', required: true, example: 1 })
+  @ApiQuery({ name: 'limit', required: true, example: 10 })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
