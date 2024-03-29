@@ -25,6 +25,7 @@ export class ParticipantService {
       return await this.repository.findAndCount({
         skip: (paginationOptions.page - 1) * paginationOptions.limit,
         take: paginationOptions.limit,
+        relations: { school: { degree: true } },
       });
     } catch (error) {
       throw new InternalServerErrorException();

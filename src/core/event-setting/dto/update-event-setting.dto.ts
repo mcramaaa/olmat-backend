@@ -5,7 +5,11 @@ import {
   createOneWeekAgo,
 } from 'src/shared/utils/date-dto.helper';
 
-export class CreateEventSettingDTO {
+export class UpdateEventSettingDTO {
+  @ApiProperty({ example: 10 })
+  @IsNotEmpty()
+  id: number;
+
   @ApiProperty({ example: 'Olim' })
   @IsNotEmpty()
   name: string;

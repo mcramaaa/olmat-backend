@@ -19,6 +19,8 @@ export class EventSettingSeedService {
       end.setMonth(end.getMonth() + 2);
       await this.repository.save(
         this.repository.create({
+          name: 'eventName',
+          tagline: 'eventTagline',
           amount: 10,
           free: 2,
           start,

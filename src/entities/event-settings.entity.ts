@@ -6,6 +6,12 @@ export class EventSettings extends EntityHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  name: string;
+
+  @Column()
+  tagline: string;
+
   @Column({ type: 'timestamp', precision: 6 })
   start: Date;
 

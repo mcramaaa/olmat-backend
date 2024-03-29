@@ -21,6 +21,7 @@ import { ParticipantService } from './participant.service';
 import { Participants } from 'src/entities/participants.entity';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UpdateParticipantDTO } from './dto/update-participant.dto';
+import { NullableType } from 'src/shared/types/nullable.type';
 
 @ApiTags('Participant')
 @ApiBearerAuth()
@@ -45,6 +46,12 @@ export class ParticipantController {
     });
 
     return customPagination(data, count, { page, limit });
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id') id: string): Promise<NullableType<Participants>> {
+    return await this.participantService.findOne({ id });
   }
 
   @ApiConsumes('multipart/form-data')
