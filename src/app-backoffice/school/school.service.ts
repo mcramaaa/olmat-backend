@@ -43,7 +43,12 @@ export class SchoolService {
             : undefined,
           degree: filter.degree_id ? { id: filter.degree_id } : undefined,
         },
-        relations: { city: { region: true }, degree: true },
+        relations: {
+          city: { region: true },
+          province: true,
+          subdistrict: true,
+          degree: true,
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException();

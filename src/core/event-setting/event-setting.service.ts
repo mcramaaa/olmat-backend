@@ -37,6 +37,8 @@ export class EventSettingService {
     } else {
       const eventSetting = await this.eventSettingRepo.findOne({ where: {} });
       Object.assign(eventSetting, {
+        name: payload.name,
+        tagline: payload.tagline,
         start: payload.start,
         end: payload.end,
         amount: payload.amount,
@@ -45,4 +47,17 @@ export class EventSettingService {
       await this.eventSettingRepo.save(eventSetting);
     }
   }
+
+  // async update(payload: UpdateEventSettingDTO): Promise<void> {
+  //   const eventSetting = await this.find();
+  //   if (!eventSetting) throw new BadRequestException();
+  //   Object.assign(eventSetting, {
+  //     name: payload.name,
+  //     tagline: payload.tagline,
+  //     start: payload.start,
+  //     end: payload.end,
+  //     amount: payload.amount,
+  //     free: payload.free,
+  //   });
+  // }
 }

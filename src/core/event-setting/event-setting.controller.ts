@@ -17,6 +17,7 @@ import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 import { PaginationResultType } from 'src/shared/types/pagination-result.type';
 import { EventSettings } from 'src/entities/event-settings.entity';
 import { customPagination } from 'src/shared/utils/pagination';
+import { NullableType } from 'src/shared/types/nullable.type';
 
 @ApiTags('Event Setting')
 @ApiBearerAuth()
@@ -44,6 +45,12 @@ export class EventSettingController {
     );
 
     return customPagination(data, count, { page, limit });
+  }
+
+  @Get('/findOne')
+  @HttpCode(HttpStatus.OK)
+  async findOne(): Promise<NullableType<EventSettings>> {
+    return await this.eventSettingService.find();
   }
 
   @Post()
