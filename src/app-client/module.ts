@@ -5,6 +5,7 @@ import { LocationApiModule } from './location-api/location-api.module';
 import { ParticipantModule } from './participant/participant.module';
 import { PaymentModule } from './payment/payment.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { EventSettingModule } from './event-setting/event-setting.module';
 
 export const UserCLientModules = [
   UserModule,
@@ -14,4 +15,5 @@ export const UserCLientModules = [
   ParticipantModule,
   PaymentModule,
   DashboardModule,
+  EventSettingModule,
 ];
