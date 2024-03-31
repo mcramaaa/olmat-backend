@@ -32,6 +32,7 @@ export class SchoolController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
+  @ApiQuery({ name: 'name', required: false, example: 'MA AMANATUL' })
   @ApiQuery({ name: 'region_id', required: false, example: 'BNDUG' })
   @ApiQuery({ name: 'province_id', required: false, example: '32' })
   @ApiQuery({ name: 'city_id', required: false, example: '3273' })
@@ -40,18 +41,21 @@ export class SchoolController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('name') name: string,
     @Query('region_id') region_id: string,
     @Query('province_id') province_id: string,
     @Query('city_id') city_id: string,
     @Query('subdistric_id') subdistric_id: string,
     @Query('degree_id') degree_id: string,
   ): Promise<PaginationResultType<Schools>> {
+    console.log(name);
     const [data, count] = await this.schoolService.findManyWithPagination(
       {
         page,
         limit,
       },
       {
+        name,
         region_id,
         province_id,
         city_id,
@@ -67,6 +71,7 @@ export class SchoolController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
+  @ApiQuery({ name: 'name', required: false, example: 'MA AMANATUL' })
   @ApiQuery({ name: 'region_id', required: false, example: 'BNDUG' })
   @ApiQuery({ name: 'province_id', required: false, example: '32' })
   @ApiQuery({ name: 'city_id', required: false, example: '3273' })
@@ -75,6 +80,7 @@ export class SchoolController {
   async requestLists(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('name') name: string,
     @Query('region_id') region_id: string,
     @Query('province_id') province_id: string,
     @Query('city_id') city_id: string,
@@ -87,6 +93,7 @@ export class SchoolController {
         limit,
       },
       {
+        name,
         region_id,
         province_id,
         city_id,

@@ -43,8 +43,8 @@ export class Payments extends EntityHelper {
   @Column({ unsigned: true })
   total_amount: number;
 
-  @Column({ default: () => 'DATE_ADD(CURRENT_TIMESTAMP() , INTERVAL 24 HOUR)' })
-  expired_at: Date;
+  @Column()
+  expired_at: Date = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
   status: PaymentStatus;

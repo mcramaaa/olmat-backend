@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { EntityCondition } from 'src/shared/types/entity-condition.type';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { Users } from 'src/entities/users.entity';
+import { PaymentStatus } from 'src/shared/enums/payment.enum';
 
 @Injectable()
 export class PaymentService {
@@ -31,7 +32,10 @@ export class PaymentService {
   async findOne(
     condition: EntityCondition<Payments>,
   ): Promise<NullableType<Payments>> {
-    return await this.paymentRepository.findOne({ where: condition });
+    return await this.paymentRepository.findOne({
+      where: condition,
+      relations: { participants: true },
+    });
   }
 
   async getPendingPayment(user: Users): Promise<Payments[]> {
@@ -46,7 +50,7 @@ export class PaymentService {
         total_amount: true,
         status: true,
       },
-      where: { user: { id: user.id } },
+      where: { user: { id: user.id }, status: PaymentStatus.PENDING },
     });
   }
 }

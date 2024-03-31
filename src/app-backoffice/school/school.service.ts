@@ -9,7 +9,7 @@ import { EntityCondition } from 'src/shared/types/entity-condition.type';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { IPaginationOptions } from 'src/shared/types/pagination-options';
 import { TFilterSchool } from 'src/shared/types/school.type';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 @Injectable()
 export class SchoolService {
@@ -33,6 +33,7 @@ export class SchoolService {
         take: paginationOptions.limit,
         where: {
           is_accept: true,
+          name: filter.name ? Like(`%${filter.name}%`) : filter.name,
           city: filter.city_id
             ? { id: filter.city_id }
             : filter.region_id
@@ -60,7 +61,12 @@ export class SchoolService {
   ): Promise<NullableType<Schools>> {
     return await this.repository.findOne({
       where: condition,
-      relations: { degree: true },
+      relations: {
+        degree: true,
+        city: { region: true },
+        province: true,
+        subdistrict: true,
+      },
     });
   }
 
@@ -73,6 +79,7 @@ export class SchoolService {
         skip: (paginationOptions.page - 1) * paginationOptions.limit,
         take: paginationOptions.limit,
         where: {
+          name: filter.name ? Like(`%${filter.name}%`) : filter.name,
           is_accept: false,
           city: filter.city_id
             ? { id: filter.city_id }
