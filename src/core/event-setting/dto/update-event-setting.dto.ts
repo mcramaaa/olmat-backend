@@ -6,17 +6,21 @@ import {
 } from 'src/shared/utils/date-dto.helper';
 
 export class UpdateEventSettingDTO {
-  @ApiProperty({ example: 10 })
-  @IsNotEmpty()
-  id: number;
-
-  @ApiProperty({ example: 'Olim' })
+  @ApiProperty({ example: 'Olimpiade Nasional' })
   @IsNotEmpty()
   name: string;
+
+  @ApiProperty({ example: 'OLIM NAS' })
+  @IsNotEmpty()
+  shortname: string;
 
   @ApiProperty({ example: 'olimnih' })
   @IsNotEmpty()
   tagline: string;
+
+  @ApiProperty({ example: 'Olimpiade Nasional' })
+  @IsNotEmpty()
+  copyright: string;
 
   @ApiProperty({ example: createOneWeekAgo() })
   @IsNotEmpty()

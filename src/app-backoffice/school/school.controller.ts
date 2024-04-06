@@ -48,7 +48,6 @@ export class SchoolController {
     @Query('subdistric_id') subdistric_id: string,
     @Query('degree_id') degree_id: string,
   ): Promise<PaginationResultType<Schools>> {
-    console.log(name);
     const [data, count] = await this.schoolService.findManyWithPagination(
       {
         page,

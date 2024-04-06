@@ -10,6 +10,12 @@ export class EventSettings extends EntityHelper {
   name: string;
 
   @Column()
+  shortname: string;
+
+  @Column()
+  copyright: string;
+
+  @Column()
   tagline: string;
 
   @Column({ type: 'timestamp', precision: 6 })

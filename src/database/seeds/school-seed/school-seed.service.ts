@@ -45,7 +45,6 @@ export class SchoolSeedService {
       );
       await queryRunner.commitTransaction();
     } catch (error) {
-      console.log(error);
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException();
     } finally {

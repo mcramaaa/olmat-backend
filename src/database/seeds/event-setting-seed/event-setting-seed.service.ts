@@ -20,7 +20,9 @@ export class EventSettingSeedService {
       await this.repository.save(
         this.repository.create({
           name: 'eventName',
+          shortname: 'shortEventName',
           tagline: 'eventTagline',
+          copyright: 'Copyright Olimpiade',
           amount: 10,
           free: 2,
           start,

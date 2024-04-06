@@ -38,7 +38,9 @@ export class EventSettingService {
       const eventSetting = await this.eventSettingRepo.findOne({ where: {} });
       Object.assign(eventSetting, {
         name: payload.name,
+        shortname: payload.shortname,
         tagline: payload.tagline,
+        copyright: payload.copyright,
         start: payload.start,
         end: payload.end,
         amount: payload.amount,
