@@ -56,6 +56,27 @@ export class ParticipantController {
     return customPagination(data, count, { page, limit });
   }
 
+  @Get('/admin')
+  @HttpCode(HttpStatus.OK)
+  @ApiQuery({ name: 'page', required: true, example: 1 })
+  @ApiQuery({ name: 'limit', required: true, example: 10 })
+  async adminFindAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @SessionUser() user: Users,
+  ): Promise<PaginationResultType<Participants>> {
+    const [data, count] =
+      await this.participantService.adminFindManyWithPagination(
+        {
+          page,
+          limit,
+        },
+        user,
+      );
+
+    return customPagination(data, count, { page, limit });
+  }
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string): Promise<NullableType<Participants>> {

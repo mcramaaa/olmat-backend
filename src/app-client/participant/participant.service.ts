@@ -50,10 +50,29 @@ export class ParticipantService {
     }
   }
 
+  async adminFindManyWithPagination(
+    paginationOptions: IPaginationOptions,
+    user: Users,
+  ): Promise<[Participants[], number]> {
+    try {
+      return await this.repository.findAndCount({
+        skip: (paginationOptions.page - 1) * paginationOptions.limit,
+        take: paginationOptions.limit,
+        where: { payment: { user: { id: user.id } } },
+        relations: { school: { degree: true } },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async findOne(
     condition: EntityCondition<Participants>,
   ): Promise<NullableType<Participants>> {
-    return await this.repository.findOne({ where: condition });
+    return await this.repository.findOne({
+      where: condition,
+      relations: { school: { degree: true, city: { region: true } } },
+    });
   }
 
   private async getPrice(length: number, degree: Degree) {
