@@ -13,7 +13,7 @@ export class CreateSchoolDTO {
 
   @ApiProperty({ example: '3783' })
   @IsNotEmpty()
-  subdistrict_id: number;
+  subdistrict_id: string;
 
   @ApiProperty({
     example: 'JL. SAMPORA SEKEAWI, SUKAMENAK, KEC. MARGAHAYU, KAB.BANDUNG',

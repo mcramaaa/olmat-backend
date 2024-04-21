@@ -1,6 +1,6 @@
 export type TParticipantType = {
   region?: string;
-  subdistrict?: number;
+  subdistrict?: string;
   province?: string;
   city?: string;
   degree?: string;

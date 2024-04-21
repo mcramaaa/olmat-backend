@@ -49,7 +49,7 @@ export class ParticipantController {
     @Query('region') region?: string,
     @Query('province') province?: string,
     @Query('city') city?: string,
-    @Query('subdistrict') subdistrict?: number,
+    @Query('subdistrict') subdistrict?: string,
     @Query('degree') degree?: string,
     @Query('school') school?: number,
     @Query('name') name?: string,

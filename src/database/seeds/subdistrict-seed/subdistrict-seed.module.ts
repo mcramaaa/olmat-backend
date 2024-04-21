@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Subdistricts } from 'src/entities/subdistricts.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Subdistricts])],
+  imports: [],
   providers: [SubdistrictSeedService],
 })
 export class SubdistrictSeedModule {}

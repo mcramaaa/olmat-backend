@@ -45,7 +45,7 @@ export class SchoolController {
     @Query('region_id') region_id: string,
     @Query('province_id') province_id: string,
     @Query('city_id') city_id: string,
-    @Query('subdistric_id') subdistric_id: string,
+    @Query('subdistrict_id') subdistrict_id: string,
     @Query('degree_id') degree_id: string,
   ): Promise<PaginationResultType<Schools>> {
     const [data, count] = await this.schoolService.findManyWithPagination(
@@ -58,7 +58,7 @@ export class SchoolController {
         region_id,
         province_id,
         city_id,
-        subdistric_id,
+        subdistrict_id,
         degree_id,
       },
     );
@@ -83,7 +83,7 @@ export class SchoolController {
     @Query('region_id') region_id: string,
     @Query('province_id') province_id: string,
     @Query('city_id') city_id: string,
-    @Query('subdistric_id') subdistric_id: string,
+    @Query('subdistrict_id') subdistrict_id: string,
     @Query('degree_id') degree_id: string,
   ): Promise<PaginationResultType<Schools>> {
     const [data, count] = await this.schoolService.schoolRequesList(
@@ -96,7 +96,7 @@ export class SchoolController {
         region_id,
         province_id,
         city_id,
-        subdistric_id,
+        subdistrict_id,
         degree_id,
       },
     );

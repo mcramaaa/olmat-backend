@@ -57,7 +57,7 @@ export class SchoolService {
     );
   }
 
-  async getSchoolBySubdistrict(subdistrict_id: number): Promise<Schools[]> {
+  async getSchoolBySubdistrict(subdistrict_id: string): Promise<Schools[]> {
     return await this.repository.find({
       where: { subdistrict: { id: subdistrict_id }, is_accept: true },
     });
@@ -79,8 +79,8 @@ export class SchoolService {
             : filter.region_id
             ? { region: { id: filter.region_id } }
             : undefined,
-          subdistrict: filter.subdistric_id
-            ? { id: +filter.subdistric_id }
+          subdistrict: filter.subdistrict_id
+            ? { id: filter.subdistrict_id }
             : undefined,
           degree: filter.degree_id ? { id: filter.degree_id } : undefined,
         },
@@ -126,8 +126,8 @@ export class SchoolService {
             : filter.region_id
             ? { region: { id: filter.region_id } }
             : undefined,
-          subdistrict: filter.subdistric_id
-            ? { id: +filter.subdistric_id }
+          subdistrict: filter.subdistrict_id
+            ? { id: filter.subdistrict_id }
             : undefined,
           degree: filter.degree_id ? { id: filter.degree_id } : undefined,
         },

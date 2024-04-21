@@ -41,7 +41,7 @@ export class LocationApiController {
   @Get('school/:subdistrict_id')
   @HttpCode(HttpStatus.OK)
   async getSchools(
-    @Param('subdistrict_id') subdistrict_id: number,
+    @Param('subdistrict_id') subdistrict_id: string,
   ): Promise<Schools[]> {
     return await this.locationService.getSchools(subdistrict_id);
   }

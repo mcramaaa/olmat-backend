@@ -31,7 +31,7 @@ export class LocationApiService {
     return await this.subdistrictService.getSubdistrictsByCity(city_id);
   }
 
-  async getSchools(subdistrict_id: number): Promise<Schools[]> {
+  async getSchools(subdistrict_id: string): Promise<Schools[]> {
     return await this.schoolService.getSchoolBySubdistrict(subdistrict_id);
   }
 

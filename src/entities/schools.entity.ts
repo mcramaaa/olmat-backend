@@ -25,10 +25,10 @@ export class Schools extends EntityHelper {
   @Column()
   address: string;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   email: string;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   phone: string;
 
   @Column({ nullable: true })
