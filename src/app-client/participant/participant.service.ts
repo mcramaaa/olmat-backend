@@ -59,7 +59,7 @@ export class ParticipantService {
         skip: (paginationOptions.page - 1) * paginationOptions.limit,
         take: paginationOptions.limit,
         where: { payment: { user: { id: user.id } } },
-        relations: { school: { degree: true } },
+        relations: { school: { degree: true, city: { region: true } } },
       });
     } catch (error) {
       throw new InternalServerErrorException();

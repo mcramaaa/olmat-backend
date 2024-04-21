@@ -7,7 +7,7 @@ export class CreateParticipantDTO {
   @IsNotEmpty()
   participants: any[];
 
-  @ApiProperty()
+  @ApiProperty({ required: false, description: 'required for admin only' })
   @IsOptional()
   school_id?: number;
 
