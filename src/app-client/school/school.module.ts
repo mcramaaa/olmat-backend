@@ -11,7 +11,6 @@ import { DegreeModule } from 'src/app-backoffice/degree/degree.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Schools]),
-    SchoolModule,
     ProvinceModule,
     CityModule,
     SubdistrictModule,

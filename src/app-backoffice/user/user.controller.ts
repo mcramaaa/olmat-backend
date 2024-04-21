@@ -1,11 +1,14 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +19,7 @@ import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 import { UserService } from './user.service';
 import { Users } from 'src/entities/users.entity';
 import { NullableType } from 'src/shared/types/nullable.type';
+import { CreateUserDTO } from './dto/create-user.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -62,5 +66,17 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string): Promise<NullableType<Users>> {
     return await this.userService.findOne({ id });
+  }
+
+  @Post('user-register')
+  @HttpCode(HttpStatus.CREATED)
+  async registerParticipant(@Body() payload: CreateUserDTO): Promise<void> {
+    return await this.userService.create(payload);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('id') id: string): Promise<void> {
+    return await this.userService.delete(id);
   }
 }

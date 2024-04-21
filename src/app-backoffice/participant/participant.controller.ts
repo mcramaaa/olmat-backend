@@ -36,14 +36,39 @@ export class ParticipantController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
+  @ApiQuery({ name: 'region', required: false, example: 'SBY' })
+  @ApiQuery({ name: 'province', required: false, example: 'province_id' })
+  @ApiQuery({ name: 'city', required: false, example: 'city_id' })
+  @ApiQuery({ name: 'subdistrict', required: false, example: 'subdistrict_id' })
+  @ApiQuery({ name: 'degree', required: false, example: 'degree_id' })
+  @ApiQuery({ name: 'school', required: false, example: 'school_id' })
+  @ApiQuery({ name: 'name', required: false, example: 'Bejo' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('region') region?: string,
+    @Query('province') province?: string,
+    @Query('city') city?: string,
+    @Query('subdistrict') subdistrict?: number,
+    @Query('degree') degree?: string,
+    @Query('school') school?: number,
+    @Query('name') name?: string,
   ): Promise<PaginationResultType<Participants>> {
-    const [data, count] = await this.participantService.findManyWithPagination({
-      page,
-      limit,
-    });
+    const [data, count] = await this.participantService.findManyWithPagination(
+      {
+        page,
+        limit,
+      },
+      {
+        region,
+        province,
+        city,
+        subdistrict,
+        degree,
+        school,
+        name,
+      },
+    );
 
     return customPagination(data, count, { page, limit });
   }

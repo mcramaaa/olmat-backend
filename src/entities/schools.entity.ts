@@ -31,7 +31,7 @@ export class Schools extends EntityHelper {
   @Column({ unique: true })
   phone: string;
 
-  @Column()
+  @Column({ nullable: true })
   whatsapp: string;
 
   @Column({ type: 'enum', enum: SchoolStatus, default: SchoolStatus.HITAM })

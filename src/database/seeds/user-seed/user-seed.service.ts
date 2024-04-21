@@ -1,5 +1,4 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Schools } from 'src/entities/schools.entity';
 import { Users } from 'src/entities/users.entity';
 import { DataSource } from 'typeorm';
 
@@ -12,11 +11,6 @@ export class UserSeedService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const school = await queryRunner.manager.findOneOrFail(Schools, {
-      where: { id: 1 },
-      relations: { city: { region: true } },
-    });
-
     try {
       await queryRunner.manager.save(
         queryRunner.manager.create(Users, {
@@ -25,8 +19,7 @@ export class UserSeedService {
           password: 'ggwp',
           phone: '08168',
           type: 'Admin',
-          school,
-          region: school.city.region,
+          region: { id: 'SBY' },
         }),
       );
 

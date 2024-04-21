@@ -10,12 +10,52 @@ import { NullableType } from 'src/shared/types/nullable.type';
 import { IPaginationOptions } from 'src/shared/types/pagination-options';
 import { TFilterSchool } from 'src/shared/types/school.type';
 import { Like, Repository } from 'typeorm';
+import { ProvinceService } from '../province/province.service';
+import { CityService } from '../city/city.service';
+import { DegreeService } from '../degree/degree.service';
+import { CreateSchoolDTO } from './dto/create-school.dto';
+import { SubdistrictService } from '../subdistrict/subdistrict.service';
 
 @Injectable()
 export class SchoolService {
   constructor(
     @InjectRepository(Schools) private repository: Repository<Schools>,
+    private subdistrictService: SubdistrictService,
+    private provinceService: ProvinceService,
+    private cityService: CityService,
+    private degreeService: DegreeService,
   ) {}
+
+  async craete(payload: CreateSchoolDTO): Promise<Schools> {
+    const province = await this.provinceService.findOne({
+      id: payload.province_id,
+    });
+    if (!province) throw new BadRequestException();
+
+    const city = await this.cityService.findOne({
+      id: payload.city_id,
+    });
+    if (!city) throw new BadRequestException();
+
+    const subdistrict = await this.subdistrictService.findOne({
+      id: payload.subdistrict_id,
+    });
+    if (!subdistrict) throw new BadRequestException();
+
+    const degree = await this.degreeService.findOne({ id: payload.degree_id });
+    if (!degree) throw new BadRequestException();
+
+    return await this.repository.save(
+      this.repository.create({
+        ...payload,
+        degree,
+        is_accept: false,
+        province,
+        city,
+        subdistrict,
+      }),
+    );
+  }
 
   async getSchoolBySubdistrict(subdistrict_id: number): Promise<Schools[]> {
     return await this.repository.find({

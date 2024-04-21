@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/entities/users.entity';
 import { EntityCondition } from 'src/shared/types/entity-condition.type';
@@ -6,10 +10,24 @@ import { NullableType } from 'src/shared/types/nullable.type';
 import { IPaginationOptions } from 'src/shared/types/pagination-options';
 import { TFilterUser } from 'src/shared/types/user.type';
 import { Like, Repository } from 'typeorm';
+import { CreateUserDTO } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(Users) private repository: Repository<Users>) {}
+
+  async create(payload: CreateUserDTO): Promise<void> {
+    await this.repository.save(
+      this.repository.create({
+        name: payload.name,
+        email: payload.email,
+        password: payload.password,
+        phone: payload.phone,
+        type: 'Admin',
+        region: { id: payload.region_id },
+      }),
+    );
+  }
 
   async findManyWithPagination(
     paginationOptions: IPaginationOptions,
@@ -35,5 +53,13 @@ export class UserService {
     condition: EntityCondition<Users>,
   ): Promise<NullableType<Users>> {
     return await this.repository.findOne({ where: condition });
+  }
+
+  async delete(id: string): Promise<void> {
+    const user = this.findOne({ id });
+    if (!user) {
+      throw new NotFoundException('cant find user');
+    }
+    await this.repository.delete(id);
   }
 }

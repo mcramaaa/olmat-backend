@@ -10,11 +10,11 @@ import {
 } from 'typeorm';
 import { Payments } from './payments.entity';
 import { Schools } from './schools.entity';
-import { Regions } from './regions.entity';
 import { Exclude } from 'class-transformer';
 import { make } from 'src/shared/utils/hash';
 import { AuditTrail, EntityHelper } from 'src/shared/utils/entity-helper';
 import { Participants } from './participants.entity';
+import { Regions } from './regions.entity';
 
 @Entity()
 export class Users extends EntityHelper {
@@ -63,7 +63,7 @@ export class Users extends EntityHelper {
   participants: Participants[];
 
   @ManyToOne(() => Schools, (school) => school.users, {
-    nullable: false,
+    nullable: true,
   })
   school: Schools;
 
