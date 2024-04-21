@@ -22,12 +22,14 @@ import { WebhookModule } from 'src/core/webhook/webhook.module';
 import { VendorModule } from 'src/vendor/vendor.module';
 import { AppCacheModule } from 'src/core/cache/cache.module';
 import { SettingModule } from 'src/core/setting/setting.module';
-import { EventSettingModule } from 'src/core/event-setting/event-setting.module';
+import { AllConfigType } from 'src/shared/types/config.type';
+import { MailConfigService } from 'src/core/mail-config.service';
+import mailConfig from 'src/shared/config/mail.config';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, appConfig, authConfig, cacheConfig],
+      load: [databaseConfig, appConfig, authConfig, cacheConfig, mailConfig],
       envFilePath: ['.env'],
     }),
     EventEmitterModule.forRoot({
@@ -36,15 +38,15 @@ import { EventSettingModule } from 'src/core/event-setting/event-setting.module'
     }),
     CacheModule.registerAsync<RedisClientOptions>({
       isGlobal: true,
-      useFactory: () => ({
+      useFactory: (configService: ConfigService<AllConfigType>) => ({
         isGlobal: true,
         store: require('cache-manager-redis-store'),
-        host: process.env.CACHE_HOST,
-        max: Number(process.env.CACHE_MAX),
-        ttl: Number(process.env.CACHE_TTL),
-        port: Number(process.env.CACHE_PORT),
-        auth_pass: process.env.CACHE_PASS,
-        db: Number(process.env.CACHE_DB),
+        host: configService.get('cache.host', { infer: true }),
+        max: configService.get('cache.max', { infer: true }),
+        ttl: configService.get('cache.ttl', { infer: true }),
+        port: configService.get('cache.port', { infer: true }),
+        // auth_pass: configService.get('cache.auth_pass', { infer: true }),
+        db: configService.get('cache.db', { infer: true }),
       }),
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -55,21 +57,9 @@ import { EventSettingModule } from 'src/core/event-setting/event-setting.module'
         return new DataSource(options).initialize();
       },
     }),
-    MailerModule.forRoot({
-      transport: {
-        host: 'mail.olmat-uinsa.com',
-        port: 465,
-        // ignoreTLS: true,
-        secure: true,
-        auth: {
-          user: 'olmatuinsa@olmat-uinsa.com',
-          pass: '#OlmatUINSA20',
-        },
-      },
-      // defaults: {
-      //   from: '"No Reply" <no-reply@localhost>',
-      // },
-      // preview: true,
+
+    MailerModule.forRootAsync({
+      useClass: MailConfigService,
     }),
 
     AuthModule,

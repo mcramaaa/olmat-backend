@@ -20,6 +20,7 @@ import { OtpDto } from '../dto/otp.dto';
 import { HashDTO } from '../dto/hash.dto';
 import { AuthUserLoginDto } from '../dto/auth-user-login.dto';
 import { UpdateUserAuthDTO } from './dto/update-user-auth.dto';
+import { AuthForgotPasswordDto } from '../dto/auth-forgot-password.dto';
 
 @ApiTags('Auth User')
 @Controller({
@@ -71,6 +72,17 @@ export class AuthUserController {
     @SessionUser() user: Users,
   ): Promise<OkResponse<NullableType<Users>>> {
     return okTransform(await this.service.me(user));
+  }
+
+  @Post('/forgot/password')
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(
+    @Body() forgotPasswordDto: AuthForgotPasswordDto,
+  ): Promise<OkResponse<string>> {
+    return okTransform(
+      await this.service.forgotPassword(forgotPasswordDto.email),
+      'We have already send email',
+    );
   }
 
   @Post('/login')

@@ -82,6 +82,7 @@ export type CacheConfig = {
 export type AllConfigType = {
   app: AppConfig;
   apple: AppleConfig;
+  cache: CacheConfig;
   auth: AuthConfig;
   database: DatabaseConfig;
   facebook: FacebookConfig;

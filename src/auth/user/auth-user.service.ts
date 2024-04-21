@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpStatus,
   Inject,
@@ -30,6 +31,7 @@ import { LoginResponseType } from 'src/shared/types/auth/login-response.type';
 import { ErrorException } from 'src/shared/exceptions/error.exception';
 import { compare } from 'src/shared/utils/hash';
 import { UpdateUserAuthDTO } from './dto/update-user-auth.dto';
+import { EmailForgotPasswordEvent } from '../events/email-forgot-password.event copy';
 
 @Injectable()
 export class AuthUserService {
@@ -227,7 +229,12 @@ export class AuthUserService {
     await this.cacheService.remove(this.getOTPCacheKey(hash));
     await this.cacheService.set(
       this.getOTPCacheKey(userHash),
-      1,
+      {
+        name: userCache.name,
+        email: userCache.email,
+        phone: userCache.phone,
+        otp_counter: userCache.otp_counter,
+      },
       this.config.otpExpires,
     );
 
@@ -347,5 +354,44 @@ export class AuthUserService {
       userDto,
     );
     return { name, email, phone };
+  }
+
+  async forgotPassword(email: string): Promise<string> {
+    const user = await this.usersService.findOne({
+      email,
+    });
+
+    if (!user) {
+      throw new ErrorException(
+        {
+          email: 'emailNotExists',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const userCahce: { otp_counter: number } = await this.cacheService.get(
+      'FORGOT:' + user.email,
+    );
+
+    const otpCounter = userCahce ? userCahce.otp_counter + 1 : 1;
+
+    if (otpCounter > 7) {
+      throw new BadRequestException('to many request');
+    }
+
+    await this.cacheService.remove('FORGOT:' + user.email).then(async () => {
+      await this.cacheService.set('FORGOT:' + user.email, {
+        ootp_counter: otpCounter,
+      });
+    });
+
+    //Send email otp
+    this.eventEmitter.emit(
+      AUTH_EVENT.AUTH_RESET_PASSWORD,
+      new EmailForgotPasswordEvent(user.email, user.id),
+    );
+
+    return 'ok';
   }
 }
