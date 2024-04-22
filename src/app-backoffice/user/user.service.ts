@@ -42,7 +42,9 @@ export class UserService {
           email: filter.email ? Like(`%${filter.email}%`) : undefined,
           phone: filter.phone ? Like(`%${filter.phone}%`) : undefined,
           school: filter.school_id ? { id: +filter.school_id } : undefined,
+          type: filter.type ? Like(`%${filter.type}`) : undefined,
         },
+        relations: { region: true },
       });
     } catch (error) {
       throw new InternalServerErrorException();

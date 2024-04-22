@@ -13,4 +13,5 @@ export enum PERMISSIONS {
   USER_EDIT = 'users-edit',
   ADMIN = 'admin',
   ADMIN_EDIT = 'admin-edit',
+  ADMIN_REGION = 'adminregion',
 }

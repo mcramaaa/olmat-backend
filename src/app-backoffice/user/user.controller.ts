@@ -38,6 +38,7 @@ export class UserController {
   @ApiQuery({ name: 'email', required: false, example: 'bejo@gmail.com' })
   @ApiQuery({ name: 'phone', required: false, example: '08168242591' })
   @ApiQuery({ name: 'school', required: false, example: 1 })
+  @ApiQuery({ name: 'type', required: false, example: 'admin' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
@@ -45,6 +46,7 @@ export class UserController {
     @Query('email') email: string,
     @Query('phone') phone: string,
     @Query('school') school_id: string,
+    @Query('type') type: string,
   ): Promise<PaginationResultType<Users>> {
     const [data, count] = await this.userService.findManyWithPagination(
       {
@@ -56,6 +58,7 @@ export class UserController {
         email,
         phone,
         school_id,
+        type,
       },
     );
 
