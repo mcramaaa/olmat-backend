@@ -51,7 +51,7 @@ export class ParticipantController {
     @Query('city') city?: string,
     @Query('subdistrict') subdistrict?: string,
     @Query('degree') degree?: string,
-    @Query('school') school?: number,
+    @Query('school') school?: string,
     @Query('name') name?: string,
   ): Promise<PaginationResultType<Participants>> {
     const [data, count] = await this.participantService.findManyWithPagination(

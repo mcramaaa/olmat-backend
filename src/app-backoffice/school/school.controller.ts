@@ -36,7 +36,7 @@ export class SchoolController {
   @ApiQuery({ name: 'region_id', required: false, example: 'BDG' })
   @ApiQuery({ name: 'province_id', required: false, example: '32' })
   @ApiQuery({ name: 'city_id', required: false, example: '3273' })
-  @ApiQuery({ name: 'subdistric_id', required: false, example: '2537' })
+  @ApiQuery({ name: 'subdistrict_id', required: false, example: '2537' })
   @ApiQuery({ name: 'degree_id', required: false, example: '02' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,

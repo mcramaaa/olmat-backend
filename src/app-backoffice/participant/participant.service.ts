@@ -28,7 +28,7 @@ export class ParticipantService {
       return await this.repository.findAndCount({
         skip: (paginationOptions.page - 1) * paginationOptions.limit,
         take: paginationOptions.limit,
-        relations: { school: { degree: true } },
+        relations: { school: { degree: true, city: { region: true } } },
         where: {
           name: filter.name ? Like(`%${filter.name}%`) : undefined,
           school: {
@@ -38,7 +38,7 @@ export class ParticipantService {
               ? { id: filter.subdistrict }
               : undefined,
             degree: filter.degree ? { id: filter.degree } : undefined,
-            id: filter.school ? filter.school : undefined,
+            name: filter.school ? Like(`%${filter.school}%`) : undefined,
           },
           status: ParticipantStatus.ACTIVE,
         },
