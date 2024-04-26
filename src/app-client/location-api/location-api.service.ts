@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CityService } from 'src/app-backoffice/city/city.service';
 import { DegreeService } from 'src/app-backoffice/degree/degree.service';
 import { ProvinceService } from 'src/app-backoffice/province/province.service';
@@ -9,10 +10,12 @@ import { Degree } from 'src/entities/degree.entity';
 import { Provincies } from 'src/entities/provincies.entity';
 import { Schools } from 'src/entities/schools.entity';
 import { Subdistricts } from 'src/entities/subdistricts.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class LocationApiService {
   constructor(
+    @InjectRepository(Cities) private repository: Repository<Cities>,
     private provinceService: ProvinceService,
     private cityService: CityService,
     private subdistrictService: SubdistrictService,
@@ -37,5 +40,11 @@ export class LocationApiService {
 
   async getDegree(): Promise<Degree[]> {
     return await this.degreeService.findAll();
+  }
+
+  async getCitiesByRegion(region_id: string): Promise<Cities[]> {
+    return await this.repository.find({
+      where: { region: { id: region_id } },
+    });
   }
 }

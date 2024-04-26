@@ -51,4 +51,12 @@ export class LocationApiController {
   async getDegree(): Promise<Degree[]> {
     return await this.locationService.getDegree();
   }
+
+  @Get('cities/:region_id')
+  @HttpCode(HttpStatus.OK)
+  async getCitiesByRegion(
+    @Param('region_id') region_id: string,
+  ): Promise<Cities[]> {
+    return await this.locationService.getCitiesByRegion(region_id);
+  }
 }
