@@ -24,5 +24,5 @@ jobs:
             git pull origin main
             yarn install
             yarn build
-            pm2 stop ecosystem-production.config.js
-            pm2 start ecosystem-production.config.js
+            pm2 stop ecosystem.config.js
+            pm2 start ecosystem.config.js
