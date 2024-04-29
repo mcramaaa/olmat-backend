@@ -14,10 +14,9 @@ export class CreateUserDTO {
   email: string;
 
   @ApiProperty({ example: '081645654' })
-  @Validate(IsNotExist, ['Users'], {
-    message: 'phoneAlreadyExists',
-  })
-  @IsNotEmpty()
+  // @Validate(IsNotExist, ['Users'], {
+  //   message: 'phoneAlreadyExists',
+  // })
   phone: string;
 
   @ApiProperty({ example: 'ggwp1234' })

@@ -50,7 +50,7 @@ export class Users extends EntityHelper {
     }
   }
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   phone: string;
 
   @Column()
