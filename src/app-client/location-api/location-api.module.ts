@@ -6,9 +6,12 @@ import { CityModule } from 'src/app-backoffice/city/city.module';
 import { SubdistrictModule } from 'src/app-backoffice/subdistrict/subdistrict.module';
 import { SchoolModule } from 'src/app-backoffice/school/school.module';
 import { DegreeModule } from 'src/app-backoffice/degree/degree.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Cities } from 'src/entities/cities.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Cities]),
     ProvinceModule,
     CityModule,
     SubdistrictModule,
