@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schools } from 'src/entities/schools.entity';
@@ -30,26 +31,26 @@ export class SchoolService {
     const province = await this.provinceService.findOne({
       id: payload.province_id,
     });
-    if (!province) throw new BadRequestException();
+    if (!province) throw new NotFoundException('cant find province');
 
     const city = await this.cityService.findOne({
       id: payload.city_id,
     });
-    if (!city) throw new BadRequestException();
+    if (!city) throw new NotFoundException('cant find city');
 
     const subdistrict = await this.subdistrictService.findOne({
       id: payload.subdistrict_id,
     });
-    if (!subdistrict) throw new BadRequestException();
+    if (!subdistrict) throw new NotFoundException('cant find subdistrict');
 
     const degree = await this.degreeService.findOne({ id: payload.degree_id });
-    if (!degree) throw new BadRequestException();
+    if (!degree) throw new NotFoundException('cant find degree');
 
     return await this.repository.save(
       this.repository.create({
         ...payload,
         degree,
-        is_accept: false,
+        is_accept: true,
         province,
         city,
         subdistrict,

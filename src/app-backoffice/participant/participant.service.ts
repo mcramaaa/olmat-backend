@@ -33,7 +33,14 @@ export class ParticipantService {
           name: filter.name ? Like(`%${filter.name}%`) : undefined,
           school: {
             province: filter.province ? { id: filter.province } : undefined,
-            city: filter.city ? { id: filter.city } : undefined,
+            city:
+              filter.city && !filter.region
+                ? { id: filter.city }
+                : filter.city && filter.region
+                ? { id: filter.city, region: { id: filter.region } }
+                : !filter.city && filter.region
+                ? { region: { id: filter.region } }
+                : undefined,
             subdistrict: filter.subdistrict
               ? { id: filter.subdistrict }
               : undefined,

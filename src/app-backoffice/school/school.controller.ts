@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
   Delete,
@@ -8,6 +9,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -18,6 +20,7 @@ import { AuthAdminGuard } from 'src/shared/guards/auth.guard';
 import { SchoolService } from './school.service';
 import { Schools } from 'src/entities/schools.entity';
 import { NullableType } from 'src/shared/types/nullable.type';
+import { CreateSchoolDTO } from './dto/create-school.dto';
 
 @ApiTags('School')
 @ApiBearerAuth()
@@ -28,6 +31,12 @@ import { NullableType } from 'src/shared/types/nullable.type';
 })
 export class SchoolController {
   constructor(private schoolService: SchoolService) {}
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() payload: CreateSchoolDTO): Promise<Schools> {
+    return await this.schoolService.craete(payload);
+  }
+
   @Get('/')
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })

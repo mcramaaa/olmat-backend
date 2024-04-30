@@ -11,7 +11,7 @@ export class CreateSchoolDTO {
   @IsNotEmpty()
   city_id: string;
 
-  @ApiProperty({ example: '3783' })
+  @ApiProperty({ example: '3525040' })
   @IsNotEmpty()
   subdistrict_id: string;
 
@@ -21,7 +21,7 @@ export class CreateSchoolDTO {
   @IsNotEmpty()
   address: string;
 
-  @ApiProperty({ example: '001' })
+  @ApiProperty({ example: '01' })
   @IsNotEmpty()
   degree_id: string;
 
