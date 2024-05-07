@@ -88,6 +88,7 @@ export class PaymentGatewayService {
 
     Object.assign(paymentGateway, {
       ...payload,
+      fee_percentage: +payload.fee_percentage,
       logo: img ? img : oldLogo,
     });
     await paymentGateway.save();
