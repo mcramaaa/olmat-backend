@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'prod-olim-backend',
+      name: 'prod-olmat-backend',
       script: 'dist/main.js',
       instances: 1,
       autorestart: true,
