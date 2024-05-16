@@ -25,7 +25,7 @@ export class AdminSeedService {
         this.repository.create({
           name: 'Super Admin',
           email: 'super@admin.com',
-          password: 'ggwp',
+          password: 'P@ssw0rd',
           role,
         }),
       );
