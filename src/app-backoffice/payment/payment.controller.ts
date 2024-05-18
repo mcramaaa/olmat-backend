@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   ParseIntPipe,
   Query,
   UseGuards,
@@ -48,5 +49,11 @@ export class PaymentController {
     );
 
     return customPagination(data, count, { page, limit });
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Payments> {
+    return await this.paymentService.findOne({ id });
   }
 }
