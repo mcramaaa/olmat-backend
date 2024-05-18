@@ -44,7 +44,7 @@ export class UserService {
           school: filter.school_id ? { id: +filter.school_id } : undefined,
           type: filter.type ? Like(`%${filter.type}`) : undefined,
         },
-        relations: { region: true },
+        relations: { school: true, region: true },
       });
     } catch (error) {
       throw new InternalServerErrorException();

@@ -31,6 +31,7 @@ export class PaymentService {
           status: filter.status,
           invoice: filter.invoice,
         },
+        relations: { user: true },
       });
     } catch (error) {
       throw new InternalServerErrorException();
@@ -42,7 +43,7 @@ export class PaymentService {
   ): Promise<NullableType<Payments>> {
     return await this.paymentRepopsitory.findOne({
       where: condition,
-      relations: { participants: true },
+      relations: { participants: true, user: true },
     });
   }
 }
