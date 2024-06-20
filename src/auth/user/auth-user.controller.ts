@@ -21,6 +21,7 @@ import { HashDTO } from '../dto/hash.dto';
 import { AuthUserLoginDto } from '../dto/auth-user-login.dto';
 import { UpdateUserAuthDTO } from './dto/update-user-auth.dto';
 import { AuthForgotPasswordDto } from '../dto/auth-forgot-password.dto';
+import { UpdateForgetPassDTO } from './dto/update-forget-password.dto';
 
 @ApiTags('Auth User')
 @Controller({
@@ -83,6 +84,18 @@ export class AuthUserController {
       await this.service.forgotPassword(forgotPasswordDto.email),
       'We have already send email',
     );
+  }
+
+  @Post('/forgot/password/update')
+  @HttpCode(HttpStatus.OK)
+  async updatePassword(
+    @Body() dto: UpdateForgetPassDTO,
+  ): Promise<{ message: string }> {
+    try {
+      return await this.service.updatePassword(dto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('/login')

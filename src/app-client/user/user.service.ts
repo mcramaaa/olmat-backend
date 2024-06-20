@@ -10,12 +10,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ErrorException } from 'src/shared/exceptions/error.exception';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
+import { CacheService } from 'src/core/cache/cache.service';
+import { UpdateForgetPassDTO } from 'src/auth/user/dto/update-forget-password.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(Users) private userRepository: Repository<Users>,
+    private cacheService: CacheService,
   ) {}
 
   async findOne(condition: EntityCondition<Users>) {
@@ -32,19 +35,22 @@ export class UserService {
     }
 
     if (payload.phone) {
-      const isUserExist = await this.userRepository.exists({
+      const isUserExist = await this.userRepository.findOne({
         where: { phone: payload.phone },
       });
-      if (isUserExist)
-        throw new BadRequestException('phone number already exist');
+      if (isUserExist && isUserExist.id !== user.id) {
+        throw new BadRequestException('Phone number already exists');
+      }
       user.phone = payload.phone;
     }
 
     if (payload.email) {
-      const isUserExist = await this.userRepository.exists({
+      const isUserExist = await this.userRepository.findOne({
         where: { email: payload.email },
       });
-      if (isUserExist) throw new BadRequestException('email already exist');
+      if (isUserExist && isUserExist.id !== user.id) {
+        throw new BadRequestException('Email already exists');
+      }
       user.email = payload.email;
     }
 
@@ -54,7 +60,7 @@ export class UserService {
 
     if (payload.password) {
       if (payload.currentPassword) {
-        const isValidCurrentPassword = compare(
+        const isValidCurrentPassword = await compare(
           payload.currentPassword,
           user.password,
         );
@@ -67,30 +73,20 @@ export class UserService {
             HttpStatus.UNPROCESSABLE_ENTITY,
           );
         }
-        if (payload.password == payload.currentPassword) {
+
+        if (payload.password === payload.currentPassword) {
           throw new ErrorException(
             {
-              password: 'password not changed',
+              password: 'Password must be different from current password',
             },
             HttpStatus.UNPROCESSABLE_ENTITY,
           );
         }
-        // const strongPasswordPattern =
-        //   /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]|\\;:'",.<>/?]).{8,}$/;
-        // if (!strongPasswordPattern.test(payload.password)) {
-        //   throw new ErrorException(
-        //     {
-        //       password:
-        //         'Minimal 6 character, 1 Upercase, 1 lowercase, 1 special character',
-        //     },
-        //     HttpStatus.UNPROCESSABLE_ENTITY,
-        //   );
-        // }
 
         if (payload.password.length < 8) {
           throw new ErrorException(
             {
-              password: 'Minimal 8 character',
+              password: 'Password must be at least 8 characters',
             },
             HttpStatus.UNPROCESSABLE_ENTITY,
           );
@@ -103,13 +99,56 @@ export class UserService {
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
-      user.password = payload.password;
+      user.password = await hash(payload.password, 10);
     }
 
     try {
-      return await user.save();
+      return await this.userRepository.save(user);
     } catch (error) {
       throw new InternalServerErrorException();
+    }
+  }
+
+  async updateHashByEmail(email: string, hash: string): Promise<void> {
+    await this.userRepository.update({ email }, { hash });
+  }
+
+  async updatePassOnForget(
+    dto: UpdateForgetPassDTO,
+  ): Promise<{ message: string }> {
+    const { email, hash: userHash, newPassword } = dto;
+
+    const user = await this.userRepository.findOne({
+      where: { email: email },
+    });
+
+    if (!user || user.hash !== userHash) {
+      throw new BadRequestException('Invalid email or hash');
+    }
+
+    if (newPassword.length < 8) {
+      throw new BadRequestException('Password must be at least 8 characters');
+    }
+
+    const isSamePassword = await compare(newPassword, user.password);
+    if (isSamePassword) {
+      await this.cacheService.set('FORGOT:' + user.email, { otp_counter: 0 });
+      throw new BadRequestException(
+        'New password must be different from the current password',
+      );
+    }
+
+    // user.password = await hash(newPassword, 10);
+    user.password = newPassword;
+
+    try {
+      user.hash = null;
+      await this.userRepository.save(user);
+      await this.cacheService.set('FORGOT:' + user.email, { otp_counter: 0 });
+      return { message: 'Password updated successfully' };
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Failed to update password');
     }
   }
 }

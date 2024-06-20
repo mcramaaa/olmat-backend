@@ -56,6 +56,9 @@ export class Users extends EntityHelper {
   @Column()
   type: string;
 
+  @Column({ unique: true, nullable: true })
+  hash: string;
+
   @OneToMany(() => Payments, (payment) => payment.user)
   payments: Payments[];
 

@@ -19,7 +19,7 @@ export class EmailForgotPasswordListener {
         subject: 'Link Lupa Password Olmat UINSA',
         text: template.replace(
           '[link]',
-          process.env.FRONTEND_DOMAIN + `/${event.id}`,
+          process.env.FRONTEND_DOMAIN + `/forgot-pass/${event.hash}`,
         ),
       })
       .then(() => {
