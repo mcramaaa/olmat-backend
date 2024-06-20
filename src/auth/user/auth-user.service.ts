@@ -20,7 +20,6 @@ import { UserService } from 'src/app-client/user/user.service';
 import { Users } from 'src/entities/users.entity';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { AuthRegisterLoginDto } from '../dto/auth-register-login.dto';
-import { generateHash } from 'src/shared/utils/random-string';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AUTH_EVENT } from 'src/shared/enums/auth-event.enum';
 import { EmailOTPEvent } from '../events/email-otp.event';
@@ -32,6 +31,11 @@ import { ErrorException } from 'src/shared/exceptions/error.exception';
 import { compare } from 'src/shared/utils/hash';
 import { UpdateUserAuthDTO } from './dto/update-user-auth.dto';
 import { EmailForgotPasswordEvent } from '../events/email-forgot-password.event copy';
+import {
+  generateHash,
+  generateRandomString,
+} from 'src/shared/utils/random-string';
+import { UpdateForgetPassDTO } from './dto/update-forget-password.dto';
 
 @Injectable()
 export class AuthUserService {
@@ -386,12 +390,45 @@ export class AuthUserService {
       });
     });
 
+    // Hasilkan hash baru
+    const hash = generateRandomString(55);
+
+    // Update hash di database
+    await this.usersService.updateHashByEmail(email, hash);
+
     //Send email otp
     this.eventEmitter.emit(
       AUTH_EVENT.AUTH_RESET_PASSWORD,
-      new EmailForgotPasswordEvent(user.email, user.id),
+      new EmailForgotPasswordEvent(user.email, user.id, hash),
     );
+    const token = this.jwtService.sign({ email: user.email });
 
-    return 'ok';
+    return token;
+
+    // return 'ok';
+  }
+
+  async updatePassword(dto: UpdateForgetPassDTO): Promise<{ message: string }> {
+    const { email, hash, newPassword } = dto;
+
+    const user = await this.usersService.findOne({ hash: hash });
+
+    if (!user) {
+      throw new BadRequestException('Invalid email or hash provided');
+    }
+
+    // Update password using bcrypt
+    user.password = newPassword;
+
+    try {
+      await this.usersService.updatePassOnForget({
+        email: email,
+        hash: hash,
+        newPassword: newPassword,
+      });
+      return { message: 'Password updated successfully' };
+    } catch (error) {
+      throw new BadRequestException('Failed to update password');
+    }
   }
 }
