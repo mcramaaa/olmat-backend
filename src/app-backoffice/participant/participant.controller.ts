@@ -43,6 +43,7 @@ export class ParticipantController {
   @ApiQuery({ name: 'degree', required: false, example: 'degree_id' })
   @ApiQuery({ name: 'school', required: false, example: 'school_id' })
   @ApiQuery({ name: 'name', required: false, example: 'Bejo' })
+  @ApiQuery({ name: 'status', required: false, example: 'active' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
@@ -53,6 +54,7 @@ export class ParticipantController {
     @Query('degree') degree?: string,
     @Query('school') school?: string,
     @Query('name') name?: string,
+    @Query('status') status?: string,
   ): Promise<PaginationResultType<Participants>> {
     const [data, count] = await this.participantService.findManyWithPagination(
       {
@@ -67,6 +69,7 @@ export class ParticipantController {
         degree,
         school,
         name,
+        status,
       },
     );
 
