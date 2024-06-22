@@ -11,7 +11,6 @@ import { UpdateParticipantDTO } from './dto/update-participant.dto';
 import { EntityCondition } from 'src/shared/types/entity-condition.type';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { TParticipantType } from 'src/shared/types/filter.type';
-import { ParticipantStatus } from 'src/shared/enums/participants.enum';
 
 @Injectable()
 export class ParticipantService {
@@ -47,7 +46,7 @@ export class ParticipantService {
             degree: filter.degree ? { id: filter.degree } : undefined,
             name: filter.school ? Like(`%${filter.school}%`) : undefined,
           },
-          status: ParticipantStatus.ACTIVE,
+          status: filter.status,
         },
       });
     } catch (error) {

@@ -6,4 +6,5 @@ export type TParticipantType = {
   degree?: string;
   school?: string;
   name?: string;
+  status?: string;
 };
