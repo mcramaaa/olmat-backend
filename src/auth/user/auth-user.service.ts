@@ -360,6 +360,12 @@ export class AuthUserService {
     return { name, email, phone };
   }
 
+  async getUserHash(hash: string): Promise<NullableType<Users>> {
+    return this.usersService.findOne({
+      hash: hash,
+    });
+  }
+
   async forgotPassword(email: string): Promise<string> {
     const user = await this.usersService.findOne({
       email,
