@@ -7,9 +7,10 @@ import {
   UseGuards,
   Body,
   Patch,
+  Param,
 } from '@nestjs/common';
 import { AuthUserService } from './auth-user.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { OkResponse, okTransform } from 'src/shared/utils/ok-response';
 import { SessionUser } from 'src/shared/decorators/user.decorator';
 import { AuthUserGuard } from 'src/shared/guards/auth.guard';
@@ -63,6 +64,16 @@ export class AuthUserController {
     return okTransform(
       await this.service.confirmation(payload.hash, payload.otp),
     );
+  }
+
+  @ApiBearerAuth()
+  @Get('/hash/:hash')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'hash', required: true })
+  async getHash(
+    @Param('hash') hash: string,
+  ): Promise<OkResponse<NullableType<Users>>> {
+    return okTransform(await this.service.getUserHash(hash));
   }
 
   @ApiBearerAuth()
