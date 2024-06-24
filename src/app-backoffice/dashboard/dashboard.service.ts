@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 export class DashboardService {
   constructor(private datasource: DataSource) {}
   async getDashboardData() {
-    const dashboardQuery = `SELECT (SELECT SUM(amount) FROM payments) AS total_pendapatan,
+    const dashboardQuery = `SELECT (SELECT SUM(amount) FROM payments WHERE status = 'paid') AS total_pendapatan,
                   (SELECT COUNT(*) FROM schools WHERE is_accept = true) AS total_sekolah,
                   (SELECT COUNT(*) FROM participants WHERE status = '${ParticipantStatus.ACTIVE}') AS total_peserta,
                   (SELECT COUNT(*) FROM participants WHERE status = '${ParticipantStatus.CANCEL}') AS total_peserta_cancel,
