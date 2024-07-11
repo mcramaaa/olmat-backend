@@ -263,6 +263,7 @@ export class ParticipantService {
         participants,
       };
     } catch (error: any) {
+      await queryRunner.rollbackTransaction();
       imgs.map(async (img) => {
         await unlink('./storage/imgs/' + img, (err) => {
           if (err) throw err;
@@ -282,12 +283,11 @@ export class ParticipantService {
         }
         throw new ErrorException(
           {
-            message: `Phone ${extractedString} is already to use!`,
+            message: `${extractedString} is already to use!`,
           },
           509,
         );
       }
-      await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException();
     } finally {
       await queryRunner.release();
