@@ -16,10 +16,10 @@ export class Participants extends EntityHelper {
   @Column()
   gender: string;
 
-  @Column({ unique: true })
+  @Column()
   phone: string;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column()
