@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { IPaginationOptions } from 'src/shared/types/pagination-options';
 import { Payments } from 'src/entities/payments.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -52,5 +56,17 @@ export class PaymentService {
       },
       where: { user: { id: user.id }, status: PaymentStatus.PENDING },
     });
+  }
+
+  async delete(condition: EntityCondition<Payments>): Promise<void> {
+    const payment = await this.findOne(condition);
+    if (!payment) {
+      throw new NotFoundException('Payment not found');
+    }
+    try {
+      await this.paymentRepository.remove(payment);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to delete payment');
+    }
   }
 }

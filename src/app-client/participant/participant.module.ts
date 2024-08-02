@@ -10,11 +10,13 @@ import { PaymentGatewayModule } from '../payment-gateway/payment-gateway.module'
 import { XenditModule } from 'src/vendor/xendit/xendit.module';
 import { SettingModule } from 'src/core/setting/setting.module';
 import { EventSettingModule } from 'src/core/event-setting/event-setting.module';
+import { PaymentModule } from '../payment/payment.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Participants]),
     SchoolModule,
+    PaymentModule,
     EventSettingModule,
     PaymentGatewayModule,
     XenditModule,
