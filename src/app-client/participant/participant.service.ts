@@ -304,7 +304,7 @@ export class ParticipantService {
   async regeneratePayment(
     payload: RegeneratePaymentDTO,
     user: Users,
-  ): Promise<Participants[]> {
+  ): Promise<{ payment: Payments; participants: Participants[] }> {
     const paginationOptions = { page: 1, limit: 100 }; // Sesuaikan limit sesuai kebutuhan Anda
     const [participants, total] = await this.findManyWithPagination(
       paginationOptions,
@@ -409,7 +409,7 @@ export class ParticipantService {
         await this.paymentService.delete({ id: oldPayment.id });
       }
 
-      return participants;
+      return { payment: newPayment, participants };
     } catch (error: any) {
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException();
