@@ -22,6 +22,8 @@ import { PaymentGatewayService } from '../payment-gateway/payment-gateway.servic
 import { XenditService } from 'src/vendor/xendit/xendit.service';
 import { PaymentGroup, PaymentProvider } from 'src/shared/enums/payment.enum';
 import { EventSettingService } from 'src/core/event-setting/event-setting.service';
+import { RegeneratePaymentDTO } from './dto/regenerate-payment.dto';
+import { PaymentService } from '../payment/payment.service';
 
 @Injectable()
 export class ParticipantService {
@@ -30,6 +32,7 @@ export class ParticipantService {
     private repository: Repository<Participants>,
     private datasource: DataSource,
     private schoolService: SchoolService,
+    private paymentService: PaymentService,
     private eventSettingService: EventSettingService,
     private paymentGatewaryService: PaymentGatewayService,
     private readonly xenditService: XenditService,
@@ -38,12 +41,16 @@ export class ParticipantService {
   async findManyWithPagination(
     paginationOptions: IPaginationOptions,
     user: Users,
+    payment_id?: number,
   ): Promise<[Participants[], number]> {
     try {
       return await this.repository.findAndCount({
         skip: (paginationOptions.page - 1) * paginationOptions.limit,
         take: paginationOptions.limit,
-        where: { payment: { user: { id: user.id } } },
+        relations: { payment: true },
+        where: {
+          payment: { user: { id: user.id }, id: payment_id },
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException();
@@ -288,6 +295,123 @@ export class ParticipantService {
           509,
         );
       }
+      throw new InternalServerErrorException();
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async regeneratePayment(
+    payload: RegeneratePaymentDTO,
+    user: Users,
+  ): Promise<{ payment: Payments; participants: Participants[] }> {
+    const paginationOptions = { page: 1, limit: 100 }; // Sesuaikan limit sesuai kebutuhan Anda
+    const [participants, total] = await this.findManyWithPagination(
+      paginationOptions,
+      user,
+      payload.oldPaymentId,
+    );
+
+    if (total === 0) {
+      throw new BadRequestException('Participants not found');
+    }
+
+    const school = await this.schoolService.findOne({
+      id: user.school.id,
+    });
+
+    if (!school) {
+      throw new BadRequestException('School not found');
+    }
+
+    const payment = await this.paymentGatewaryService.findOne({
+      code: payload.paymentCode,
+    });
+
+    const amount = await this.getPrice(participants.length, school.degree);
+
+    if (!payment) {
+      throw new BadRequestException('Invalid payment');
+    } else if (amount > payment.max_amount) {
+      throw new BadRequestException(
+        `The selected payment method is a maximum ${payment.max_amount}`,
+      );
+    } else if (amount < payment.min_amount) {
+      throw new BadRequestException(
+        `The selected payment method is a minimum ${payment.min_amount}`,
+      );
+    }
+
+    const payment_fee = Number(
+      (await this.paymentGatewaryService.getFee(amount, payment)).toFixed(),
+    );
+
+    const total_amount = amount + payment_fee;
+
+    const invoice = ulid();
+
+    const currentDate = new Date();
+    const expiredDate = new Date(currentDate);
+    expiredDate.setDate(new Date().getDate() + 1);
+    const formattedExpiredDate = expiredDate.toISOString();
+
+    let payment_action: object = {};
+
+    if (payment.provider === PaymentProvider.XENDIT) {
+      if (payment.group === PaymentGroup.QRIS) {
+        const res = await this.xenditService.createQRCode({
+          reference_id: invoice,
+          amount: total_amount,
+          type: 'DYNAMIC',
+          currency: 'IDR',
+          expires_at: formattedExpiredDate,
+        });
+        payment_action = {
+          id: res?.id,
+          type: res?.type,
+          channel_code: res?.channel_code,
+          qr_string: res?.qr_string,
+        };
+      }
+    }
+
+    const queryRunner = this.datasource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let oldPayment;
+
+    try {
+      oldPayment = await queryRunner.manager.findOne(Payments, {
+        where: { id: payload.oldPaymentId },
+      });
+
+      const newPayment = await queryRunner.manager.save(
+        queryRunner.manager.create(Payments, {
+          invoice,
+          code: payload.paymentCode,
+          participant_amounts: participants.length,
+          action: payment_action,
+          fee: payment_fee,
+          total_amount,
+          amount,
+          user,
+        }),
+      );
+
+      for (const participant of participants) {
+        participant.payment = newPayment;
+        await queryRunner.manager.save(participant);
+      }
+
+      await queryRunner.commitTransaction();
+      if (oldPayment) {
+        await this.paymentService.delete({ id: oldPayment.id });
+      }
+
+      return { payment: newPayment, participants };
+    } catch (error: any) {
+      await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException();
     } finally {
       await queryRunner.release();

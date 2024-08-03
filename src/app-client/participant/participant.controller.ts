@@ -26,6 +26,7 @@ import { SessionUser } from 'src/shared/decorators/user.decorator';
 import { Users } from 'src/entities/users.entity';
 import { AuthUserGuard } from 'src/shared/guards/auth.guard';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { RegeneratePaymentDTO } from './dto/regenerate-payment.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthUserGuard)
@@ -40,10 +41,12 @@ export class ParticipantController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
+  @ApiQuery({ name: 'payment_id', required: false, example: 10 })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @SessionUser() user: Users,
+    @Query('payment_id') payment_id?: number,
   ): Promise<PaginationResultType<Participants>> {
     const [data, count] = await this.participantService.findManyWithPagination(
       {
@@ -51,6 +54,7 @@ export class ParticipantController {
         limit,
       },
       user,
+      payment_id,
     );
 
     return customPagination(data, count, { page, limit });
@@ -106,5 +110,13 @@ export class ParticipantController {
       req.imgFileNames,
       req.attachmentFileNames,
     );
+  }
+
+  @Post('regenerate-payment')
+  async regeneratePayment(
+    @Body() payload: RegeneratePaymentDTO,
+    @SessionUser() user: Users,
+  ) {
+    return this.participantService.regeneratePayment(payload, user);
   }
 }

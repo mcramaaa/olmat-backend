@@ -8,6 +8,7 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -52,5 +53,11 @@ export class PaymentController {
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
     return this.paymentService.findOne({ id: +id });
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async delete(@Param('id') id: string) {
+    return this.paymentService.delete({ id: +id });
   }
 }
