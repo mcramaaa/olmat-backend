@@ -100,7 +100,7 @@ export class SchoolService {
   async findOne(
     condition: EntityCondition<Schools>,
   ): Promise<NullableType<Schools>> {
-    return await this.repository.findOne({
+    const school = await this.repository.findOne({
       where: condition,
       relations: {
         degree: true,
@@ -109,6 +109,12 @@ export class SchoolService {
         subdistrict: true,
       },
     });
+
+    if (!school) {
+      throw new NotFoundException();
+    }
+
+    return school;
   }
 
   async schoolRequesList(
