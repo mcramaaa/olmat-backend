@@ -192,8 +192,8 @@ export class ParticipantService {
         const res = await queryRunner.manager.save(
           queryRunner.manager.create(Participants, {
             id:
-              school.city.region.region_code +
-              school.degree.id +
+              String(school.city.region.region_code) +
+              String(school.degree.id) +
               rtrim0('0000', String(+participantCount + 1)),
             name: objParticipant.name,
             gender: objParticipant.gender,
@@ -229,8 +229,8 @@ export class ParticipantService {
               const res = await queryRunner.manager.save(
                 queryRunner.manager.create(Participants, {
                   id:
-                    school.city.region.region_code +
-                    school.degree.id +
+                    String(school.city.region.region_code) +
+                    String(school.degree.id) +
                     rtrim0('0000', String(+participantCount + i)),
                   name: objParticipant.name,
                   gender: objParticipant.gender,
