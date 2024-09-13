@@ -11,6 +11,7 @@ import { UpdateParticipantDTO } from './dto/update-participant.dto';
 import { EntityCondition } from 'src/shared/types/entity-condition.type';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { TParticipantType } from 'src/shared/types/filter.type';
+import { participantsUpdateByPaymentDTO } from './dto/participant-updatepayment';
 
 @Injectable()
 export class ParticipantService {
@@ -86,5 +87,25 @@ export class ParticipantService {
     });
 
     await this.repository.save(participant);
+  }
+
+  async updateParticipant(id: number, payload: participantsUpdateByPaymentDTO) {
+    const participant = await this.repository.findOneBy({
+      payment: { id: id },
+    });
+    console.log(participant);
+    console.log(payload);
+
+    if (!participant) {
+      throw new Error('Participant not found');
+    }
+
+    if (payload.payment_id !== undefined) {
+      participant.payment.id = payload.payment_id;
+    }
+
+    await this.repository.save(participant);
+
+    return participant;
   }
 }
