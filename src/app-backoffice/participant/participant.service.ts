@@ -12,6 +12,9 @@ import { EntityCondition } from 'src/shared/types/entity-condition.type';
 import { NullableType } from 'src/shared/types/nullable.type';
 import { TParticipantType } from 'src/shared/types/filter.type';
 import { participantsUpdateByPaymentDTO } from './dto/participant-updatepayment';
+import { Payments } from 'src/entities/payments.entity';
+import { Schools } from 'src/entities/schools.entity';
+import { Users } from 'src/entities/users.entity';
 
 @Injectable()
 export class ParticipantService {
@@ -89,23 +92,48 @@ export class ParticipantService {
     await this.repository.save(participant);
   }
 
-  async updateParticipant(id: number, payload: participantsUpdateByPaymentDTO) {
-    const participant = await this.repository.findOneBy({
-      payment: { id: id },
+  async updateParticipantsByPayment(
+    paymentId: number,
+    payload: participantsUpdateByPaymentDTO,
+  ): Promise<Participants[]> {
+    const participants = await this.repository.find({
+      where: { payment: { id: paymentId } },
+      relations: { payment: true, school: true, user: true },
     });
-    console.log(participant);
-    console.log(payload);
+    for (const participant of participants) {
+      if (payload.newStatus) {
+        participant.status = payload.newStatus;
+      }
 
-    if (!participant) {
-      throw new Error('Participant not found');
+      if (payload.newPayment_id) {
+        const newPayment = await this.repository.manager.findOne(Payments, {
+          where: { id: payload.newPayment_id },
+        });
+        if (newPayment) {
+          participant.payment = newPayment;
+        }
+      }
+
+      if (payload.newSchool_id) {
+        const newSchool = await this.repository.manager.findOne(Schools, {
+          where: { id: payload.newSchool_id },
+        });
+        if (newSchool) {
+          participant.school = newSchool;
+        }
+      }
+
+      if (payload.NewUser_id) {
+        const newUser = await this.repository.manager.findOne(Users, {
+          where: { id: `${payload.NewUser_id}` },
+        });
+        if (newUser) {
+          participant.user = newUser;
+        }
+      }
     }
 
-    if (payload.payment_id !== undefined) {
-      participant.payment.id = payload.payment_id;
-    }
-
-    await this.repository.save(participant);
-
-    return participant;
+    await this.repository.save(participants);
+    return participants;
   }
 }

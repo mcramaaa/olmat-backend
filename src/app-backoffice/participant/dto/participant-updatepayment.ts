@@ -5,20 +5,20 @@ export class participantsUpdateByPaymentDTO {
   @IsString()
   @IsOptional()
   @ApiProperty({ example: 'active' })
-  status?: string;
+  newStatus?: string;
 
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  payment_id?: number;
+  newPayment_id?: number;
 
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  school_id?: number;
+  newSchool_id?: number;
 
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  user_id?: number;
+  NewUser_id?: number;
 }

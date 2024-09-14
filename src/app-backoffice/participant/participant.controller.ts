@@ -104,12 +104,11 @@ export class ParticipantController {
     );
   }
 
-  @Put('/paymets/:id')
+  @Put('/payments/:id')
   async updateParticipant(
     @Param('id') id: number,
     @Body() payload: participantsUpdateByPaymentDTO,
   ) {
-    console.log(payload);
-    return this.participantService.updateParticipant(id, payload);
+    return this.participantService.updateParticipantsByPayment(id, payload);
   }
 }
