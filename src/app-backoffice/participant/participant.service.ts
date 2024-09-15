@@ -123,9 +123,9 @@ export class ParticipantService {
         }
       }
 
-      if (payload.NewUser_id) {
+      if (payload.newUser_id) {
         const newUser = await this.repository.manager.findOne(Users, {
-          where: { id: `${payload.NewUser_id}` },
+          where: { id: `${payload.newUser_id}` },
         });
         if (newUser) {
           participant.user = newUser;

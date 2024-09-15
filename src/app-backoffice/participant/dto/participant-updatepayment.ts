@@ -20,5 +20,5 @@ export class participantsUpdateByPaymentDTO {
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  NewUser_id?: number;
+  newUser_id?: number;
 }
